@@ -27,16 +27,36 @@
 {% block content %}
 <div class="container">
   <div class="page-header">
-
-
-    <h2>Excel file upload</h2>
-    <h3>Acceptable file formats include xlsx, xls, and csv</h3>
-    <h4>Please make your file the same format as the attached downloadable file</h4>
+    <h1>Synergy Calculator</h2>
+    <h4>Upload your unprocessed EMG file here for synergy calculations</h4>
+    <h4>Acceptable file formats include xlsx, xls, and csv</h4>
+    <p>Please make your file the same format as the attached downloadable file</p>
     <a href="example_excel.xlsx" download>Example Template</a>
-        <form action="" method=post enctype=multipart/form-data><p>
-        <input type=file name=file><input type=submit value=Upload>
-        </form>
-
   </div>
+  <p>Select filtering parameters</p>
+  <p>Default paramaters are: High pass cutoff 20 hz and Low pass cutoff 10 Hz.
+    <div class="dropdown">
+      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Highpass Cutoff
+      <span class="caret"></span></button>
+      <ul class="dropdown-menu">
+        <li><a href="20">20</a></li>
+        <li><a href="30">30</a></li>
+        <li><a href="40">40</a></li>
+      </ul>
+    </div>
+    <p></p>
+    <div class="dropdown">
+      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Lowpass Cutoff
+      <span class="caret"></span></button>
+      <ul class="dropdown-menu">
+        <li><a href="10">10</a></li>
+        <li><a href="20">20</a></li>
+        <li><a href="30">30</a></li>
+      </ul>
+    </div>
+    <p></p>
+<form action="" method=post enctype=multipart/form-data><p>
+<input type=file name=file><input type=submit value=Upload>
+</form>
 </div>
 {% endblock %}
