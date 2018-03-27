@@ -5,7 +5,7 @@ from xydatamaker import xycoordinates
 # exelfile must be in the following formula
 # excelfile = request.files['file']
 # in order to get the filename to know the correct extension and load w/ pd
-def readFlaskExcel(excelfile):
+def readFlaskExcel(excelfile, lowpass, highpass):
     filenameEF = excelfile.filename
 
     if filenameEF.endswith(".csv"):
@@ -32,11 +32,10 @@ def readFlaskExcel(excelfile):
         if 'EMG' in column[i]:
             xdata['Time %s' %(j)] = loadedfile[column[i-1]]
             ydata['EMG %s' %(j)] = loadedfile[column[i]]
+            print(lowpass)
 
             aRATE['aRATE %s' %(j)] = int(round(1/((loadedfile[column[i-1]][len(loadedfile[column[i-1]])-1]-loadedfile[column[i-1]][0])/len(loadedfile[column[i-1]]))))
-        #    xinterp['TimeInterp %s' %(j)], yfilt['EMGFilt %s' %(j)], ydata['EMG %s' %(j)] = step02_processEMG(ydata['EMG %s' %(j)], aRATE['aRATE %s' %(j)], 20, 4, 10, 4, 'EMG %s' %(j))
-        #    yfilt['EMGFilt %s' %(j)], ydata['EMG %s' %(j)] = step02_processEMG(ydata['EMG %s' %(j)], aRATE['aRATE %s' %(j)], 20, 4, 10, 4, 'EMG %s' %(j))
-            rawEMG, pEMG = step02_processEMG(ydata['EMG %s' %(j)], aRATE['aRATE %s' %(j)], 40, 4, 40, 4, 'EMG %s' %(j))
+            rawEMG, pEMG = step02_processEMG(ydata['EMG %s' %(j)], aRATE['aRATE %s' %(j)], int(highpass), 4, int(lowpass)  , 4, 'EMG %s' %(j))
             yfilt['EMGFilt %s' %(j)] = pEMG
             ydata['EMG %s' %(j)] = rawEMG[:,0].tolist()
 

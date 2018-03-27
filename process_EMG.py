@@ -18,7 +18,7 @@ def step02_processEMG(raw_EMG, aRATE, HP_CO, HP_order, LP_CO, LP_order, filename
     else :
         b, a = signal.butter(HP_order, cutoff/(aRATE/2),'highpass')
         raw_EMG = np.reshape(raw_EMG,[len(raw_EMG),1])
-        print(np.shape(raw_EMG))
+        # print(np.shape(raw_EMG))
         EMG1 = signal.filtfilt(b, a, raw_EMG, padlen=0)
 
 #   Demeaning
@@ -45,9 +45,11 @@ def step02_processEMG(raw_EMG, aRATE, HP_CO, HP_order, LP_CO, LP_order, filename
     # Xq = np.arange(round(X[0]), round(X)[len(X)-1],0.01)
     # Yq = np.interp(Xq,pEMG,X)
     pEMG = pEMG/pEMG.max()
-    print(pEMG)
+    #print(pEMG)
     pnew = [x for xs in pEMG for x in xs]
     #print(pnew.shape())
 
     raw_EMG = raw_EMG/raw_EMG.max()
+
+
     return raw_EMG, pnew

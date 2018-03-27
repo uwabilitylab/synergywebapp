@@ -40,143 +40,176 @@
         }
         </style>
       </head>
-      <div id = 'charts'></div>
-      <div id = 'tVAFs'></div>
-      <div id = 'weights'></div>
       <body>
+        <button onclick="displayEMG()">Display Filtered and Unfiltered EMG</button>
+        <button onclick="displaytVAF()">Display Synergy tVAF</button>
+        <button onclick="displayWeights()">Display Weights</button>
+        <div id = 'charts' style="display: none;"></div>
+        <div id = 'tVAFs' style="display: none;"></div>
+        <div id = 'weights' style="display: none;"></div>
         <script>
         var results = {{resultsJson | safe}};
         var names = {{MNJson | safe}};
-        var chartList = document.getElementById('charts');
-        for (var i = 0; i < results.length; i++) {
-          var canvas = document.createElement('canvas');
-          canvas.setAttribute('width', 400);
-          canvas.setAttribute('height', 100);
-          chartList.appendChild(canvas);
-          var color = Chart.helpers.color;
-          var scatterChartData = {
-            datasets: [{
-                label:"Filtered",
-                borderColor: window.chartColors.red,
-                pointRadius: .5,
-                backgroundColor: color(window.chartColors.red).alpha(0.2).rgbString(),
-                data: results[i].filt
-              },{
-                label:"Unfiltered",
-                borderColor: window.chartColors.blue,
-                pointRadius: .5,
-                backgroundColor: color(window.chartColors.blue).alpha(0.2).rgbString(),
-                data: results[i].raw
-              }]
-            };
-          var ctx = canvas.getContext('2d');
-          window.myScatter = Chart.Scatter(ctx, {
-            scaleOverride: true,
-            scaleSteps: 10,
-            scaleStepWidth: .00001,
-            scaleStartValue: -0.0001,
-            scaleShowVerticalLines: true,
-            scaleShowGridLines : true,
-            data: scatterChartData,
-            options: {
-                showLine: true,
-                title: {
-                    display: true,
-                    text: names[i]
-                },
-              }
-          });
+        function displayEMG() {
+          var chartList = document.getElementById("tVAFs");
+          if (chartList.style.display === "none") {
+            chartList.style.display = "block";
+            for (var i = 0; i < results.length; i++) {
+              var canvas = document.createElement('canvas');
+              canvas.setAttribute('width', 400);
+              canvas.setAttribute('height', 100);
+              chartList.appendChild(canvas);
+              var color = Chart.helpers.color;
+              var scatterChartData = {
+                datasets: [{
+                    label:"Filtered",
+                    borderColor: window.chartColors.red,
+                    pointRadius: .5,
+                    backgroundColor: color(window.chartColors.red).alpha(0.2).rgbString(),
+                    data: results[i].filt
+                  },{
+                    label:"Unfiltered",
+                    borderColor: window.chartColors.blue,
+                    pointRadius: .5,
+                    backgroundColor: color(window.chartColors.blue).alpha(0.2).rgbString(),
+                    data: results[i].raw
+                  }]
+                };
+              var ctx = canvas.getContext('2d');
+              window.myScatter = Chart.Scatter(ctx, {
+                scaleOverride: true,
+                scaleSteps: 10,
+                scaleStepWidth: .00001,
+                scaleStartValue: -0.0001,
+                scaleShowVerticalLines: true,
+                scaleShowGridLines : true,
+                data: scatterChartData,
+                options: {
+                    showLine: true,
+                    title: {
+                        display: true,
+                        text: names[i]
+                    },
+                  }
+              });
+            }
+          } else {
+            chartList.style.display = "none";
+            while (chartList.firstChild) {
+                chartList.removeChild(chartList.firstChild);
+            }
+          }
         }
         var alltVAF = {{tVAFJson | safe}};
-        var tVAFList = document.getElementById('tVAFs');
-        var canvas = document.createElement('canvas');
-        canvas.setAttribute('width', 400);
-        canvas.setAttribute('height', 100);
-        tVAFList.appendChild(canvas);
-        var color = Chart.helpers.color;
-        var barChartData = {
-          labels : [{% for item in tVAFlabels %}
-                         "{{item}}",
-                     {% endfor %}],
-          datasets: [{
-              label: 'tVAF',
-              borderColor: window.chartColors.orange,
-              borderWidth: 1,
-              backgroundColor: color(window.chartColors.orange).alpha(0.2).rgbString(),
-              data: alltVAF
-            }]
-          };
-        var ctx = canvas.getContext('2d');
-        window.myBar = Chart.Bar(ctx, {
-          type: 'bar',
-          data: barChartData,
-          options: {
-              responsive: true,
-              legend: {
-                  position: 'top',
-              },
-              title: {
-                  display: true,
-                  text: 'Total Variance Accounted For'
+        function displaytVAF() {
+          var tVAFList = document.getElementById("tVAFs");
+          if (tVAFList.style.display === "none") {
+              tVAFList.style.display = "block";
+              var canvas = document.createElement('canvas');
+              canvas.setAttribute('width', 400);
+              canvas.setAttribute('height', 100);
+              tVAFList.appendChild(canvas);
+              var color = Chart.helpers.color;
+              var barChartData = {
+                labels : [{% for item in tVAFlabels %}
+                               "{{item}}",
+                           {% endfor %}],
+                datasets: [{
+                    label: 'tVAF',
+                    borderColor: window.chartColors.orange,
+                    borderWidth: 1,
+                    backgroundColor: color(window.chartColors.orange).alpha(0.2).rgbString(),
+                    data: alltVAF
+                  }]
+                };
+              var ctx = canvas.getContext('2d');
+              window.myBar = Chart.Bar(ctx, {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Total Variance Accounted For'
+                    }
+                  }
+              });
+          } else {
+              tVAFList.style.display = "none";
+              while (tVAFList.firstChild) {
+                  tVAFList.removeChild(tVAFList.firstChild);
               }
-            }
-        });
-        var allWeights = {{WWJson | safe}};
-        var weightList = document.getElementById('weights');
-        for (var i = 0; i < allWeights.length; i++) {
-          var canvas = document.createElement('canvas');
-          canvas.setAttribute('width', 400);
-          canvas.setAttribute('height', 100);
-          weightList.appendChild(canvas);
-          var color = Chart.helpers.color;
-          function newDataSet(i, j, allWeights) {
-            var colorChoice = [window.chartColors.orange, window.chartColors.yellow, window.chartColors.green, window.chartColors.blue, window.chartColors.purple]
-            return {
-            label: "Synergy " + (j+1),
-            borderColor: colorChoice[j-1],
-            borderWidth: 1,
-            backgroundColor: color(colorChoice[j-1]).alpha(0.2).rgbString(),
-            data: allWeights[i][j]
-            }
-          };
-          var barChartData = {
-            labels : [{% for item in muscleNamesShort %}
-                           "{{item}}",
-                       {% endfor %}],
-            datasets: [{
-                label:"Synergy 1",
-                borderColor: window.chartColors.red,
-                borderWidth: 1,
-                backgroundColor: color(window.chartColors.red).alpha(0.2).rgbString(),
-                data: allWeights[i][0]
-              }]
-            };
-          for (var j = 1; j < allWeights[i].length; j++) {
-            barChartData.datasets.push(newDataSet(i,j,allWeights))
           }
-          var ctx = canvas.getContext('2d');
-          window.myBar = Chart.Bar(ctx, {
-            type: 'bar',
-            data: barChartData,
-            options: {
-                responsive: true,
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Weights of ' + (i + 1) + ' Synergy Solution'
-                },
-                scales: {
-                    xAxes: [{
-                      display: true,
-                      ticks: {
-                        fontSize: 8
-                      }
-                    }]
+        }
+        var allWeights = {{WWJson | safe}};
+        function displayWeights() {
+          var weightList = document.getElementById("tVAFs");
+          if (weightList.style.display === "none") {
+            weightList.style.display = "block";
+            for (var i = 0; i < allWeights.length; i++) {
+              var canvas = document.createElement('canvas');
+              canvas.setAttribute('width', 400);
+              canvas.setAttribute('height', 100);
+              weightList.appendChild(canvas);
+              var color = Chart.helpers.color;
+              function newDataSet(i, j, allWeights) {
+                var colorChoice = [window.chartColors.orange, window.chartColors.yellow, window.chartColors.green, window.chartColors.blue, window.chartColors.purple]
+                return {
+                label: "Synergy " + (j+1),
+                borderColor: colorChoice[j-1],
+                borderWidth: 1,
+                backgroundColor: color(colorChoice[j-1]).alpha(0.2).rgbString(),
+                data: allWeights[i][j]
                 }
+              };
+              var barChartData = {
+                labels : [{% for item in muscleNamesShort %}
+                               "{{item}}",
+                           {% endfor %}],
+                datasets: [{
+                    label:"Synergy 1",
+                    borderColor: window.chartColors.red,
+                    borderWidth: 1,
+                    backgroundColor: color(window.chartColors.red).alpha(0.2).rgbString(),
+                    data: allWeights[i][0]
+                  }]
+                };
+              for (var j = 1; j < allWeights[i].length; j++) {
+                barChartData.datasets.push(newDataSet(i,j,allWeights))
               }
-          });
+              var ctx = canvas.getContext('2d');
+              window.myBar = Chart.Bar(ctx, {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    responsive: true,
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Weights of ' + (i + 1) + ' Synergy Solution'
+                    },
+                    scales: {
+                        xAxes: [{
+                          display: true,
+                          ticks: {
+                            fontSize: 8
+                          }
+                        }]
+                    }
+                  }
+              });
+            }
+          } else {
+            weightList.style.display = "none";
+            while (weightList.firstChild) {
+                weightList.removeChild(weightList.firstChild);
+            }
+          }
         }
         </script>
       </body>

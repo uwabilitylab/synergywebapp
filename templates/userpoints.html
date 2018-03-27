@@ -28,35 +28,35 @@
 <div class="container">
   <div class="page-header">
     <h1>Synergy Calculator</h2>
-    <h4>Upload your unprocessed EMG file here for synergy calculations</h4>
-    <h4>Acceptable file formats include xlsx, xls, and csv</h4>
+    <h4>Upload your unprocessed EMG file here for synergy calculations. Acceptable file formats include xlsx, xls, and csv.</h4>
     <p>Please make your file the same format as the attached downloadable file</p>
     <a href="example_excel.xlsx" download>Example Template</a>
   </div>
-  <p>Select filtering parameters</p>
-  <p>Default paramaters are: High pass cutoff 20 hz and Low pass cutoff 10 Hz.
-    <div class="dropdown">
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Highpass Cutoff
-      <span class="caret"></span></button>
-      <ul class="dropdown-menu">
-        <li><a href="20">20</a></li>
-        <li><a href="30">30</a></li>
-        <li><a href="40">40</a></li>
-      </ul>
+  <body>
+    <h4>Select file for upload and optionally choose processing parameters</h4>
+    <p>Default processing parameters: High pass cutoff 20 hz, Low pass cutoff 10 Hz, and 5 calculated synergies</p>
+    <form action="" method=POST enctype=multipart/form-data>
+    <input type=file name="file">
+    <button type=button onclick="filterParameters()">Advanced</button>
+    <div id = 'filter'>
+      <h4>Select Parameters</h4>
+      <p><input id="high" type="number" name="high" value="20"> Highpass Filter Cutoff
+      <p><input id="low" type="number" name="low" value="10"> Lowpass Filter Cutoff
+      <p><input id="syn" type="number" name="syn" value="5"> Number of Synergies
     </div>
-    <p></p>
-    <div class="dropdown">
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Lowpass Cutoff
-      <span class="caret"></span></button>
-      <ul class="dropdown-menu">
-        <li><a href="10">10</a></li>
-        <li><a href="20">20</a></li>
-        <li><a href="30">30</a></li>
-      </ul>
-    </div>
-    <p></p>
-<form action="" method=post enctype=multipart/form-data><p>
-<input type=file name=file><input type=submit value=Upload>
-</form>
+    <input type=submit value=Upload>
+    </form>
+    <script>
+    var filteringParameters = document.getElementById('filter');
+    filteringParameters.style.display = "none";
+    function filterParameters() {
+      if (filteringParameters.style.display === "none") {
+        filteringParameters.style.display = "block";
+      } else {
+        filteringParameters.style.display = "none";
+      }
+    }
+    </script>
+<p/>
 </div>
 {% endblock %}

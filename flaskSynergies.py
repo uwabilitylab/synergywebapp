@@ -4,6 +4,7 @@ import time
 import itertools
 import multiprocessing
 import numpy as np
+from vaf import vaf
 #from multiprocessing import Pool, freeze_support
 
 def calculate_tVAF(V,W,H,vaf):
@@ -13,9 +14,10 @@ def calculate_tVAF(V,W,H,vaf):
 
     return vaf
 
-def calculate_Synergies(emg, channels):
+def calculate_Synergies(emg, channels, numSyn):
 
     WW = []
+    WWsim = []
     HH = []
     tVAF = []
     W_keep = []
@@ -24,7 +26,7 @@ def calculate_Synergies(emg, channels):
     start = time.time()
 
     #emg = np.transpose(emg)
-    for i in range(5): # second dimension of the matrix
+    for i in range(numSyn): # second dimension of the matrix
 
         nsyn = i+1
         Err = float('inf')
@@ -44,12 +46,21 @@ def calculate_Synergies(emg, channels):
                 H_keep = H
 
         tVAF.append(calculate_tVAF(emg, W_keep, H_keep, tVAF))
-        for k in range(len(W_keep)):
-            W_keep[k]=W_keep[k]/W_keep[k].max()
 
-        WW.append(W_keep)
+        for k in range(len(W_keep)):
+            W_keep[k]=W_keep[k]/np.max(W_keep[k])
+
+        sp = np.shape(W_keep)
+        Wlist = []
+        for j in range(sp[0]):
+            Wlist.append(list(W_keep[j]))
+
+        WW.append(Wlist)
         HH.append(H_keep)
 
     end = time.time()
+    # for i in range(4):
+    #     for j in range(WW[i+1].len):
+
 
     return (WW, tVAF, HH)
