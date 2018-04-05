@@ -7,7 +7,6 @@ from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
-from importCSV import CSVreader
 from vaf import vaf
 
 from werkzeug import secure_filename
@@ -96,7 +95,7 @@ def doimport():
         randString = ''.join(random.choices(string.ascii_lowercase + string.digits, k=3))
         line = randString + timeFormat
         m = sha1(line.encode('utf-8')).hexdigest()
-        filepath = "/Users/claire_mit/Documents/Steele_Lab/SynergyWebApp/" + m
+        filepath = "./csvfiles/" + m
         with open(filepath + ".csv", "w") as f:
             writer = csv.writer(f)
             writer.writerow(["Highpass"])
