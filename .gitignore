@@ -6,3 +6,4 @@ migrations
 *.pkl
 misc
 daemon.log
+data.sqlite

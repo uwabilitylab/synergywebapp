@@ -9,9 +9,6 @@ from flask_migrate import Migrate
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from config import Config
 
-# from importCSV import CSVreader
-# from vaf import vaf
-
 from werkzeug import secure_filename
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -70,9 +67,5 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
     return render_template('500.html'), 500
-
-# xdata = []
-# ydata = []
-# size = 0;
 
 # import routes, models, forms
