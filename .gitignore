@@ -1,5 +1,6 @@
 .DS_Store
 *.csv
+*.pyc
 __pycache__
 data.sqlite
 migrations
