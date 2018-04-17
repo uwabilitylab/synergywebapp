@@ -6,6 +6,8 @@ from app.xydatamaker import xycoordinates
 # excelfile = request.files['file']
 # in order to get the filename to know the correct extension and load w/ pd
 def readFlaskExcel(excelfile, lowpass, highpass):
+
+    print(excelfile)
     # filenameEF = excelfile.filename
 
     # if excelfile.endswith(".csv"):
@@ -35,7 +37,6 @@ def readFlaskExcel(excelfile, lowpass, highpass):
         if 'EMG' in column[i]:
             xdata['Time %s' %(j)] = loadedfile[column[i-1]]
             ydata['EMG %s' %(j)] = loadedfile[column[i]]
-            print(lowpass)
 
             aRATE['aRATE %s' %(j)] = int(round(1/((loadedfile[column[i-1]][len(loadedfile[column[i-1]])-1]-loadedfile[column[i-1]][0])/len(loadedfile[column[i-1]]))))
             rawEMG, pEMG = step02_processEMG(ydata['EMG %s' %(j)], aRATE['aRATE %s' %(j)], int(highpass), 4, int(lowpass)  , 4, 'EMG %s' %(j))

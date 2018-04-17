@@ -1,0 +1,108 @@
+{% extends "navbar.html" %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>{{ user }}'s Job History</h1>
+  </div>
+  <style>
+    table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+  </style>
+  <body>
+  <table class="table table-bordered">
+    <th>Raw File Path</th>
+    <th>File Size</th>
+    <th>Lowpass Cutoff</th>
+    <th>Highpass Cutoff</th>
+    <th>Synergy Number</th>
+    <th>Status</th>
+    <th>Time Submitted</th>
+    <th>View Job Results</th>
+    {% for two, three in q3 %}
+      <tr>
+        <td>{{two.raw_file_path[14:]}}</td>
+        <td>{{two.file_size}}</td>
+          <td>
+           <table class="table table-bordered">
+             {% for t in three %}
+             <tr>
+               <td>{{t.lowpass_cutoff}}</td>
+             </tr>
+             {% endfor %}
+           </table>
+          </td>
+          <td>
+           <table class="table table-bordered">
+             {% for t in three %}
+             <tr>
+               <td>{{t.highpass_cutoff}}</td>
+             </tr>
+             {% endfor %}
+           </table>
+          </td>
+          <td>
+           <table class="table table-bordered">
+             {% for t in three %}
+             <tr>
+               <td>{{t.synergy_number}}</td>
+             </tr>
+             {% endfor %}
+           </table>
+          </td>
+          <td>
+           <table class="table table-bordered">
+             {% for t in three %}
+             <tr>
+               <td>{{t.status}}</td>
+             </tr>
+             {% endfor %}
+           </table>
+          </td>
+          <td>
+           <table class="table table-bordered">
+             {% for t in three %}
+             <tr>
+               <td>{{t.time_submitted}}</td>
+             </tr>
+             {% endfor %}
+           </table>
+          </td>
+          <td>
+            <table class="table table-bordered">
+              {% for t in three %}
+              <tr>
+                <td>
+                  <form action"" method=POST enctype=multipart/form-data>
+                    <input id='job_file_id' type="hidden" name="job_file_id" value={{t.job_file_id}}>
+                  </div>
+                  <input type=submit value="View Results">
+                </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </table>
+          </td>
+      </tr>
+    {% endfor %}
+  </table>
+    <form action="" method=POST enctype=multipart/form-data>
+    <input type=submit value="Submit New Jobs">
+    </form>
+  </body>
+<p/>
+</div>
+{% endblock %}

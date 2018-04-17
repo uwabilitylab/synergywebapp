@@ -32,24 +32,34 @@ class File(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     file_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     raw_file_path = db.Column(db.String(64), index=True)
-    file_hash = db.Column(db.String(64), unique=True)
+    file_user_hash = db.Column(db.String(64), unique = True)
+    file_hash = db.Column(db.String(64))
     file_size = db.Column(db.String(64))
+    __table_args__ = (
+        db.UniqueConstraint('file_user_id', 'file_hash'),
+    )
 
     def __repr__(self):
         return '<FileId {}>'.format(self.raw_file_path)
 
-    def set_file_hash(self, file):
-        self.file_hash = hashlib.md5(file.read()).hexdigest()
+    def set_file_hash(self, filepath):
+        with open(filepath, 'rb') as f:
+            self.file_hash = hashlib.md5(f.read()).hexdigest()
         return self.file_hash
 
     def set_file_path(self, path):
         self.raw_file_path = path
 
+    def set_file_user_hash(self, filepath):
+        line = str(self.file_user_id) + filepath
+        self.file_user_hash = hashlib.md5(line.encode('utf-8')).hexdigest()
+        return self.file_user_hash
+
 class Job(db.Model):
     __tablename__ = 'jobs'
     id = db.Column(db.Integer, primary_key=True)
     job_hash = db.Column(db.String(64))
-    job_file_id = db.Column(db.String(64), db.ForeignKey('files.file_hash'))
+    job_file_id = db.Column(db.String(64), db.ForeignKey('files.file_user_hash'))
     lowpass_cutoff = db.Column(db.Integer)
     highpass_cutoff = db.Column(db.Integer)
     synergy_number = db.Column(db.Integer)
@@ -59,7 +69,7 @@ class Job(db.Model):
     time_submitted = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
     def __repr__(self):
-        return '<JobId {}>'.format(self.prcoessed_file_path)
+        return '<JobId {}>'.format(self.processed_file_path)
 
     def set_job_hash(self, job):
         self.job_hash = hashlib.md5(job.encode('utf-8')).hexdigest()

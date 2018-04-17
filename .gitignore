@@ -7,3 +7,4 @@ migrations
 misc
 daemon.log
 data.sqlite
+app/csvfiles/*.xls*

@@ -1,28 +1,4 @@
-{% extends "bootstrap/base.html" %}
-
-{% block title %}Flasky{% endblock %}
-
-{% block navbar %}
-<div class="navbar navbar-inverse" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle"
-      data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"</span>
-        <span class="icon-bar"</span>
-        <span class="icon-bar"</span>
-      </button>
-      <a class="navbar-brand" href="/">NNMF</a>
-    </div>
-    <div class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li><a href="/">Home</a></li>
-      </ul>
-    </div>
-  </div>
-</div>
-{% endblock %}
+{% extends "navbar.html" %}
 
 {% block content %}
 <div class="container">
@@ -50,6 +26,7 @@
         <script>
         var results = {{resultsJson | safe}};
         var names = {{MNJson | safe}};
+        var
         function displayEMG() {
           var chartList = document.getElementById("tVAFs");
           if (chartList.style.display === "none") {
@@ -63,15 +40,15 @@
               var scatterChartData = {
                 datasets: [{
                     label:"Filtered",
-                    borderColor: window.chartColors.red,
+                    borderColor:  '#85754d',
                     pointRadius: .5,
-                    backgroundColor: color(window.chartColors.red).alpha(0.2).rgbString(),
+                    backgroundColor: color('#85754d').alpha(0.2).rgbString(),
                     data: results[i].filt
                   },{
                     label:"Unfiltered",
-                    borderColor: window.chartColors.blue,
+                    borderColor: '#d9d9d9',
                     pointRadius: .5,
-                    backgroundColor: color(window.chartColors.blue).alpha(0.2).rgbString(),
+                    backgroundColor: color('#d9d9d9').alpha(0.2).rgbString(),
                     data: results[i].raw
                   }]
                 };
@@ -116,9 +93,9 @@
                            {% endfor %}],
                 datasets: [{
                     label: 'tVAF',
-                    borderColor: window.chartColors.orange,
+                    borderColor: '#4b2e83',
                     borderWidth: 1,
-                    backgroundColor: color(window.chartColors.orange).alpha(0.2).rgbString(),
+                    backgroundColor: color('#4b2e83').alpha(0.2).rgbString(),
                     data: alltVAF
                   }]
                 };
@@ -156,12 +133,12 @@
               weightList.appendChild(canvas);
               var color = Chart.helpers.color;
               function newDataSet(i, j, allWeights) {
-                var colorChoice = [window.chartColors.orange, window.chartColors.yellow, window.chartColors.green, window.chartColors.blue, window.chartColors.purple]
+                var colorChoice = ['#4b2e83', '#67832e', '#842E3D', '#3c6362', '#000000']
                 return {
                 label: "Synergy " + (j+1),
                 borderColor: colorChoice[j-1],
                 borderWidth: 1,
-                backgroundColor: color(colorChoice[j-1]).alpha(0.2).rgbString(),
+                backgroundColor: color(colorChoice[j-1]).alpha(0.6).rgbString(),
                 data: allWeights[i][j]
                 }
               };
@@ -171,9 +148,9 @@
                            {% endfor %}],
                 datasets: [{
                     label:"Synergy 1",
-                    borderColor: window.chartColors.red,
+                    borderColor: '#85754d',
                     borderWidth: 1,
-                    backgroundColor: color(window.chartColors.red).alpha(0.2).rgbString(),
+                    backgroundColor: color('#85754d').alpha(0.6).rgbString(),
                     data: allWeights[i][0]
                   }]
                 };
