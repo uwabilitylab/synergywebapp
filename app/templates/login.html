@@ -1,4 +1,9 @@
-{% extends "navbar.html" %}
+{% extends "header.html" %}
+
+{% block styles %}
+{{super()}}
+<link href="{{ url_for('static', filename='mystyle.css') }}" rel="stylesheet"/>
+{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -20,7 +25,7 @@
           {% endfor %}
       </p>
       <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-      <p>{{ form.submit() }}</p>
+      <a class="uw-btn" href="#" onclick="$(this).closest('form').submit()">Login<a/>
   </form>
   <p>New User? <a href="{{ url_for('register') }}">Click to Register!</a></p>
 </div>

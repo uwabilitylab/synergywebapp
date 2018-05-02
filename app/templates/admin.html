@@ -1,0 +1,56 @@
+{% extends "header.html" %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>Confirm Users</h1>
+  </div>
+  <style>
+    table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+  </style>
+  <body>
+  <table class="table table-bordered">
+    <th>Username</th>
+    <th>Email</th>
+    <th>Instituion</th>
+    <th>Confirmation Status</th>
+    <th>Confirmed On</th>
+    <th>Change Confirmation Status</th>
+    {% for one_user in users %}
+      <tr>
+        <td>{{one_user.username}}</td>
+        <td>{{one_user.email}}</td>
+        <td>{{one_user.institution}}</td>
+        <td>{{one_user.confirmed}}</td>
+        <td>{{one_user.confirmed_on}}</td>
+        <td>
+          <form action"" method=POST enctype=multipart/form-data>
+            <input id="user_conf" type="hidden" name="user_conf" value={{one_user.username}}>
+            {% if one_user.confirmed == False %}
+              <a class="uw-btn" href="#" onclick="$(this).closest('form').submit()">Confirm User<a/>
+            {% else %}
+              <a class="uw-btn" href="#" onclick="$(this).closest('form').submit()">Restrict User<a/>
+            {% endif %}
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  </body>
+<p/>
+</div>
+{% endblock %}

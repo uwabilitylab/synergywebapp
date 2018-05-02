@@ -1,4 +1,4 @@
-{% extends "navbar.html" %}
+{% extends "header.html" %}
 
 {% block content %}
 <div class="container">
@@ -23,7 +23,7 @@
   }
   </style>
   <body>
-  <table class="table table-bordered">
+  <!-- <table class="table table-striped">
     <th>Raw File Path</th>
     <th>File Size</th>
     <th>Lowpass Cutoff</th>
@@ -87,9 +87,8 @@
               <tr>
                 <td>
                   <form action"" method=POST enctype=multipart/form-data>
-                    <input id='job_file_id' type="hidden" name="job_file_id" value={{t.job_file_id}}>
-                  </div>
-                  <input type=submit value="View Results">
+                    <input id='job_hash' type="hidden" name="job_hash" value={{t.job_hash}}>
+                  <a class="uw-btn btn-sm" href="#" onclick="$(this).closest('form').submit()">Results<a/>
                 </form>
                 </td>
               </tr>
@@ -98,9 +97,45 @@
           </td>
       </tr>
     {% endfor %}
+  </table> -->
+  <table class="table table-striped">
+    <th class="one">File</th>
+    <th class="one">File Size</th>
+    <th></th>
+    {% for two, three in q3 %}
+      <tr>
+        <td class="one" title={{two.raw_file_path[14:]}}>{{two.raw_file_path[14:]}}</td>
+        <td class="one">{{two.file_size}}</td>
+        <td>
+          <table class="table table-striped">
+            <th>Lowpass Cutoff</th>
+            <th>Highpass Cutoff</th>
+            <th>Synergy Number</th>
+            <th>Status</th>
+            <th>Time Submitted</th>
+            <th>View Job Results</th>
+            {% for t in three %}
+            <tr>
+              <td>{{t.lowpass_cutoff}}</td>
+              <td>{{t.highpass_cutoff}}</td>
+              <td>{{t.synergy_number}}</td>
+              <td>{{t.status}}</td>
+              <td>{{t.time_submitted}}</td>
+              <td>
+                <form action"" method=POST enctype=multipart/form-data>
+                  <input id='job_hash' type="hidden" name="job_hash" value={{t.job_hash}}>
+                <a class="uw-btn btn-sm" href="#" onclick="$(this).closest('form').submit()">Results<a/>
+              </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+        </td>
+      </tr>
+    {% endfor %}
   </table>
     <form action="" method=POST enctype=multipart/form-data>
-    <input type=submit value="Submit New Jobs">
+    <a class="uw-btn" href="#" onclick="$(this).closest('form').submit()">Submit New Jobs</a>
     </form>
   </body>
 <p/>

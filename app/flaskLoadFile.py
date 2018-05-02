@@ -7,7 +7,7 @@ from app.xydatamaker import xycoordinates
 # in order to get the filename to know the correct extension and load w/ pd
 def readFlaskExcel(excelfile, lowpass, highpass):
 
-    print(excelfile)
+    # print(excelfile)
     # filenameEF = excelfile.filename
 
     # if excelfile.endswith(".csv"):
@@ -20,8 +20,9 @@ def readFlaskExcel(excelfile, lowpass, highpass):
     #     #try python converter to loadtext format openpy....
     # else:
     #     print("Not an acceptable file format")
-
-    loadedfile = pd.read_excel(excelfile)
+    # xlsx = pd.ExcelFile(excelfile)
+    # excelfile = "." + excelfile
+    loadedfile = pd.read_excel(excelfile, sheet_name = 0)
     column = loadedfile.columns
 
     xdata = dict()
@@ -37,12 +38,10 @@ def readFlaskExcel(excelfile, lowpass, highpass):
         if 'EMG' in column[i]:
             xdata['Time %s' %(j)] = loadedfile[column[i-1]]
             ydata['EMG %s' %(j)] = loadedfile[column[i]]
-
             aRATE['aRATE %s' %(j)] = int(round(1/((loadedfile[column[i-1]][len(loadedfile[column[i-1]])-1]-loadedfile[column[i-1]][0])/len(loadedfile[column[i-1]]))))
             rawEMG, pEMG = step02_processEMG(ydata['EMG %s' %(j)], aRATE['aRATE %s' %(j)], int(highpass), 4, int(lowpass)  , 4, 'EMG %s' %(j))
             yfilt['EMGFilt %s' %(j)] = pEMG
             ydata['EMG %s' %(j)] = rawEMG[:,0].tolist()
-
             yfiltarray.append(pEMG)
             results.append(xycoordinates(xdata['Time %s' %(j)],ydata['EMG %s' %(j)],yfilt['EMGFilt %s' %(j)]))
             columnNames.append(column[i])

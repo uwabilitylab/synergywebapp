@@ -1,16 +1,15 @@
-{% extends "navbar.html" %}
+{% extends "header.html" %}
 
 {% block content %}
 <div class="container">
   <div class="page-header">
-  </div>
-  <body>
     <form action="" method=POST enctype=multipart/form-data>
-      <input type=submit value=Results>
+      <a class="uw-btn" href="#" onclick="$(this).closest('form').submit()">View Result Status</a>
     </form>
+  </div>
+    <h4>Your file status is: {{ fileStatus | safe }}</h4>
     <p>
-    {{ fileStatus | safe }}
+    If an error message is shown, please wait an additional minute and reload the page
     </p>
-  </body>
 </div>
 {% endblock %}

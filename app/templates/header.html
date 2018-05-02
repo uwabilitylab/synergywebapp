@@ -1,0 +1,111 @@
+{%- extends "bootstrap/base.html" %}
+
+{% block styles %}
+{{super()}}
+<link href="{{ url_for('static', filename='full.css') }}" rel="stylesheet"/>
+<link href="{{ url_for('static', filename='newheader.css') }}" rel="stylesheet"/>
+{% endblock %}
+
+{% block title %}Flasky{% endblock %}
+
+{% block navbar %}
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+		<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js?ver=1.9.1'></script>
+		<script type='text/javascript' src='http://www.washington.edu/wp-includes/js/underscore.min.js?ver=1.6.0'></script>
+		<script type='text/javascript' src='http://www.washington.edu/wp-includes/js/backbone.min.js?ver=1.1.2'></script>
+		<script type='text/javascript' src='http://www.washington.edu/wp-content/themes/uw-2014/js/site.dev.js'></script>
+
+        <!--[if lt IE 9]>
+            <script src="js/html5shiv.js" type="text/javascript"></script>
+            <script src="js/respond.js" type="text/javascript"></script>
+            <link rel='stylesheet' href='css/ie.css' type='text/css' media='all' />
+        <![endif]-->
+
+    </head>
+    <body>
+
+<div id="uw-container">
+
+    <div id="uw-container-inner">
+        <header class="uw-thinstrip">
+          <div class="container"><a class="uw-patch" href="/" title="Home">University of Washington</a> <a aria-hidden="true" class="uw-wordmark" href="/" tabindex="-1" title="Home">University of Washington</a> </div>
+
+            <div class='align-right'>
+            <nav class="uw-thin-strip-nav">
+                <ul class="uw-thin-links">
+                    <li>
+                        <a href="http://depts.washington.edu/uwsteele/" title=
+                        "Ability and Innovation Lab">Ability and Innovation Lab</a>
+                    </li>
+                </ul>
+            </nav>
+            </div>
+
+        </header>
+
+        <nav id="dawgdrops">
+            <div class="dawgdrops-inner container">
+                <ul class="dawgdrops-nav" id="menu-brand-menu">
+                    <li class="dawgdrops-item">
+                        <a class="dropdown-toggle" href=
+                        "/"
+                        id="189" title="Home">Home</a>
+
+                        <ul class="dawgdrops-menu" id="menu-189">
+                            <li>
+                                <a href=
+                                "/about"
+                                id="492" tabindex="-1" title=
+                                "About Muscle Synergies">About Muscle Synergies</a>
+                            </li>
+
+                            <li>
+                                <a href=
+                                "aboutClaire"
+                                id="488" tabindex="-1" title=
+                                "About this project">About this project</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="dawgdrops-item">
+                        <a href=
+                        "/userHomepage"
+                        id="193" title="Account">Account</a>
+                    </li>
+
+                    <li class="dawgdrops-item">
+                        <a href="/doimport"
+                        id="486" title="Import File">Import File</a>
+                    </li>
+
+                    <li class="dawgdrops-item">
+                        <a href="/logout"
+                        id="486" title="Logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div id="header-image">
+          <img src="/static/image000001.jpg" class="img-fluid" alt="Electromyography">
+        </div>
+        <!-- <img src="/static/21390372_10210171564707308_756790771_o.jpg" class="img-fluid" alt="Electromyography"> -->
+        <!-- <img src="/static/Neuron-Desktop-Images.jpg" class="img-fluid" alt="Electromyography"> -->
+    </div>
+</div>
+</body>
+</html>
+
+{% endblock %}

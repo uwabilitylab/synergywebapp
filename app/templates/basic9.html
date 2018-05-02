@@ -1,82 +1,138 @@
-{% extends "navbar.html" %}
+{% extends "header.html" %}
+
+{% block styles %}
+{{super()}}
+<link href="{{ url_for('static', filename='emgplots.css') }}" rel="stylesheet"/>
+{% endblock %}
 
 {% block content %}
 <div class="container">
   <div class="page-header">
-    <h4>Calculate Muscle Synergies</h4>
+    <h1>Synergy Results</h1>
+    <a href='/static/plots/matplots_{{ name }}.pdf' target="_blank" class="uw-btn">Print results</a>
+    <a href='/static/resultcsv/{{ name }}.csv' class="uw-btn" download='/static/resultcsv/{{ name }}.csv'>Download Excel File of Results</a>
+  </div>
       <head>
         <title>Scatter Chart</title>
         <script src="/static/Chart.bundle.js"></script>
         <script src="/static/utils.js"></script>
-        <style>
+        <!-- <style>
         canvas {
             -moz-user-select: none;
             -webkit-user-select: none;
             -ms-user-select: none;
         }
-        </style>
+        </style> -->
       </head>
       <body>
-        <button onclick="displayEMG()">Display Filtered and Unfiltered EMG</button>
-        <button onclick="displaytVAF()">Display Synergy tVAF</button>
-        <button onclick="displayWeights()">Display Weights</button>
-        <div id = 'charts' style="display: none;"></div>
+        <a class="uw-btn" onclick="displayEMG()">Filtered and Unfiltered EMG</a>
+        <a class="uw-btn" onclick="displaytVAF()">Synergy tVAF</a>
+        <a class="uw-btn" onclick="displayAct()">Weights and Activations</a>
+        <div id = 'charts' style="display: none;" class="column">
+          {% for item in fn %}
+              <img src="{{item}}" alt="Electromyography" class="row" onclick="showZoomedImage(event);">
+          {% endfor %}
+        </div>
         <div id = 'tVAFs' style="display: none;"></div>
-        <div id = 'weights' style="display: none;"></div>
+        <div id = 'act' style="display: none; width:100%" class="column2">
+          {% for newItem in awnwn %}
+            <h2>{{loop.index}} Synergy Solution - tVAF</h2>
+            <div>
+            {% for item,item2 in newItem %}
+              <img src="{{item2}}" alt="Weight" class="row2" onclick="showZoomedImage(event);">
+              <img src="{{item}}" alt="Activation" class="row2" onclick="showZoomedImage(event);">
+            {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
         <script>
-        var results = {{resultsJson | safe}};
-        var names = {{MNJson | safe}};
-        var
         function displayEMG() {
-          var chartList = document.getElementById("tVAFs");
-          if (chartList.style.display === "none") {
-            chartList.style.display = "block";
-            for (var i = 0; i < results.length; i++) {
-              var canvas = document.createElement('canvas');
-              canvas.setAttribute('width', 400);
-              canvas.setAttribute('height', 100);
-              chartList.appendChild(canvas);
-              var color = Chart.helpers.color;
-              var scatterChartData = {
-                datasets: [{
-                    label:"Filtered",
-                    borderColor:  '#85754d',
-                    pointRadius: .5,
-                    backgroundColor: color('#85754d').alpha(0.2).rgbString(),
-                    data: results[i].filt
-                  },{
-                    label:"Unfiltered",
-                    borderColor: '#d9d9d9',
-                    pointRadius: .5,
-                    backgroundColor: color('#d9d9d9').alpha(0.2).rgbString(),
-                    data: results[i].raw
-                  }]
-                };
-              var ctx = canvas.getContext('2d');
-              window.myScatter = Chart.Scatter(ctx, {
-                scaleOverride: true,
-                scaleSteps: 10,
-                scaleStepWidth: .00001,
-                scaleStartValue: -0.0001,
-                scaleShowVerticalLines: true,
-                scaleShowGridLines : true,
-                data: scatterChartData,
-                options: {
-                    showLine: true,
-                    title: {
-                        display: true,
-                        text: names[i]
-                    },
-                  }
-              });
-            }
+          var EMGimages = document.getElementById('charts');
+          if (EMGimages.style.display == "none") {
+            EMGimages.style.display = "block";
           } else {
-            chartList.style.display = "none";
-            while (chartList.firstChild) {
-                chartList.removeChild(chartList.firstChild);
-            }
+            EMGimages.style.display = "none";
           }
         }
+
+        function showZoomedImage(event) {
+          var imgElement = event.currentTarget.cloneNode(false);
+          imgElement.classList.remove('row');
+          imgElement.removeAttribute('onclick');
+          var background = document.createElement('div');
+          background.setAttribute('class', 'zoomed');
+          var dialog = document.createElement('div');
+
+          var dismissZoomedImage = function(e) {
+            background.parentNode.removeChild(background);
+          }
+
+          background.addEventListener('click', dismissZoomedImage);
+          //dialog.addEventListener('click', dismissZoomedImage);
+
+          dialog.appendChild(imgElement);
+          background.appendChild(dialog);
+          document.body.appendChild(background);
+
+          var margin = (background.offsetHeight - dialog.offsetHeight)/2;
+          dialog.style.marginTop = margin + 'px';
+        }
+        //
+        //
+        //
+        // var fn =
+        // var results = {{resultsJson | safe}};
+        // var names = {{MNJson | safe}};
+        // function displayEMG() {
+        //   var chartList = document.getElementById("tVAFs");
+        //   if (chartList.style.display === "none") {
+        //     chartList.style.display = "block";
+        //     for (var i = 0; i < results.length; i++) {
+        //       var canvas = document.createElement('canvas');
+        //       canvas.setAttribute('width', 400);
+        //       canvas.setAttribute('height', 100);
+        //       chartList.appendChild(canvas);
+        //       var color = Chart.helpers.color;
+        //       var scatterChartData = {
+        //         datasets: [{
+        //             label:"Filtered",
+        //             borderColor:  '#85754d',
+        //             pointRadius: .5,
+        //             backgroundColor: color('#85754d').alpha(0.2).rgbString(),
+        //             data: results[i].filt
+        //           },{
+        //             label:"Unfiltered",
+        //             borderColor: '#d9d9d9',
+        //             pointRadius: .5,
+        //             backgroundColor: color('#d9d9d9').alpha(0.2).rgbString(),
+        //             data: results[i].raw
+        //           }]
+        //         };
+        //       var ctx = canvas.getContext('2d');
+        //       window.myScatter = Chart.Scatter(ctx, {
+        //         scaleOverride: true,
+        //         scaleSteps: 10,
+        //         scaleStepWidth: .00001,
+        //         scaleStartValue: -0.0001,
+        //         scaleShowVerticalLines: true,
+        //         scaleShowGridLines : true,
+        //         data: scatterChartData,
+        //         options: {
+        //             showLine: true,
+        //             title: {
+        //                 display: true,
+        //                 text: names[i]
+        //             },
+        //           }
+        //       });
+        //     }
+        //   } else {
+        //     chartList.style.display = "none";
+        //     while (chartList.firstChild) {
+        //         chartList.removeChild(chartList.firstChild);
+        //     }
+        //   }
+        // }
         var alltVAF = {{tVAFJson | safe}};
         function displaytVAF() {
           var tVAFList = document.getElementById("tVAFs");
@@ -121,75 +177,15 @@
               }
           }
         }
-        var allWeights = {{WWJson | safe}};
-        function displayWeights() {
-          var weightList = document.getElementById("tVAFs");
-          if (weightList.style.display === "none") {
-            weightList.style.display = "block";
-            for (var i = 0; i < allWeights.length; i++) {
-              var canvas = document.createElement('canvas');
-              canvas.setAttribute('width', 400);
-              canvas.setAttribute('height', 100);
-              weightList.appendChild(canvas);
-              var color = Chart.helpers.color;
-              function newDataSet(i, j, allWeights) {
-                var colorChoice = ['#4b2e83', '#67832e', '#842E3D', '#3c6362', '#000000']
-                return {
-                label: "Synergy " + (j+1),
-                borderColor: colorChoice[j-1],
-                borderWidth: 1,
-                backgroundColor: color(colorChoice[j-1]).alpha(0.6).rgbString(),
-                data: allWeights[i][j]
-                }
-              };
-              var barChartData = {
-                labels : [{% for item in muscleNamesShort %}
-                               "{{item}}",
-                           {% endfor %}],
-                datasets: [{
-                    label:"Synergy 1",
-                    borderColor: '#85754d',
-                    borderWidth: 1,
-                    backgroundColor: color('#85754d').alpha(0.6).rgbString(),
-                    data: allWeights[i][0]
-                  }]
-                };
-              for (var j = 1; j < allWeights[i].length; j++) {
-                barChartData.datasets.push(newDataSet(i,j,allWeights))
-              }
-              var ctx = canvas.getContext('2d');
-              window.myBar = Chart.Bar(ctx, {
-                type: 'bar',
-                data: barChartData,
-                options: {
-                    responsive: true,
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Weights of ' + (i + 1) + ' Synergy Solution'
-                    },
-                    scales: {
-                        xAxes: [{
-                          display: true,
-                          ticks: {
-                            fontSize: 8
-                          }
-                        }]
-                    }
-                  }
-              });
-            }
+        function displayAct() {
+          var Actimages = document.getElementById('act');
+          if (Actimages.style.display == "none") {
+            Actimages.style.display = "block";
           } else {
-            weightList.style.display = "none";
-            while (weightList.firstChild) {
-                weightList.removeChild(weightList.firstChild);
-            }
+            Actimages.style.display = "none";
           }
         }
         </script>
       </body>
-  </div>
 </div>
 {% endblock %}

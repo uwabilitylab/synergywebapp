@@ -11,6 +11,7 @@ from config import Config
 
 from werkzeug import secure_filename
 from flask_login import UserMixin
+from decorators import check_confirmed
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.urls import url_parse
 # from json import dumps, loads, JSONEncoder, JSONDecoder

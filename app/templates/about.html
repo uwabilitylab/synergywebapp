@@ -1,4 +1,4 @@
-{% extends "navbar.html" %}
+{% extends "header.html" %}
 
 {% block content %}
 <div class="container">
@@ -6,7 +6,11 @@
     <h1>Muscle Synergies</h1>
   </div>
   <body>
-    <h3>Motivation</h3>
+    <h4>Muscle synergies are used to quantify a person's motor control. The more synergies that are needed to accurately represent their motor control, the more complex the motor control. Muscles synergies are used to represent both upper and lower limb motor control.</h4>
+    <h2>Motivation</h3>
+      <h4>Cerebral Palsy and Stroke</h4>
+      <p>Every brain injury with cerebral palsy and stroke is unique. This results in highly individual gait impairments and thus requires patient-specific metrics to quantify motor control. Quantifying motor control analytically is less common in practice, but could lend insight into individualized treaments.</p>
+    <!-- <h3>Motivation</h3>
     <h4>Cerebral Palsy</h4>
       <p>Every brain injury is unique</p>
       <p>Need methods to quantify patient-specific impairments</p>
@@ -18,6 +22,86 @@
     <img src="/static/activations.png" class="img-fluid" alt="Synergy Activations">
     <img src="/static/leg4.png" class="img-fluid" alt="4 Muscle Subset">
     <img src="/static/leg8.png" class="img-fluid" alt="8 Muscle Subset">
-  </div>
+  </div> -->
+  <div class="uw-slideshow">
+   <div class="slide has-text">
+     <a title="Motivation" href="#">
+        <img title="Image title" src="/static/emg.png" alt="Image title" />
+     </a>
+     <div>
+      <h3><a title="Motivation" href="#">Motivation</a></h3>
+      <p>With cerebral palsy, every brain injury is unique. Because of this, patient-specific metrics at needed to quantify impairments.</p>
+     </div>
+   </div>
+   <div class="slide has-text">
+     <a title="Motivation" href="#">
+        <img title="Image title" src="/static/Screen.png" alt="Image title" />
+     </a>
+     <div>
+      <h3><a title="Muscle Synergies" href="#">Motivation</a></h3>
+      <p>Muscle synergies are calculated through non-negative matrix factorization (NNMF) of electromyography (EMG) signals.</p>
+     </div>
+    </div>
+    <div class="slide has-text">
+      <a title="Synergies" href="#">
+         <img title="Image title" src="/static/Screen.png" alt="Image title" />
+      </a>
+      <div>
+       <h3><a title="Muscle Synergies" href="#">Motivation</a></h3>
+       <p>The more synergies needed to accurately represent the EMG patterns, the more complex the gait and motor control.</p>
+      </div>
+     </div>
+   </div>
+
+<!--   <div id="home-content" class="row">
+      <h2 class="slider-header">UW Brand in Action</h2>
+<div class="col-md-8">
+<div tabindex="0" class="uw-slideshow photo-slider slideshow-1777 last-next">
+<div class="slide has-text" style="z-index: 6; left: 100%;"><a tabindex="-1" href="" title="Admissions welcome packet"><img src="https://www.washington.edu/brand/files/2015/09/Slider_WelcomePacket3.jpg" title="Admissions welcome packet"></a><p></p>
+<div style="left: -200%;">
+<h3 tabindex="-1"><a tabindex="-1" href="" title="Admissions welcome packet">Admissions welcome packet</a></h3>
+<p>Love how the design is clean and simple, letting the UW brand shine. This is a fun use of the Boundless W as a spot varnish on purple. This is a great use of the angled line -- how it is treated as a fill of UW gold. </p>
+</div>
+</div>
+<div class="slide has-text" style="z-index: 5; left: 100%;"><a tabindex="-1" href="" title="Arts &amp; Sciences Brochure"><img src="https://www.washington.edu/brand/files/2015/09/Slider_JourneyBrochure3.jpg" title="Arts &amp; Sciences Brochure"></a><p></p>
+<div style="left: -200%;">
+<h3 tabindex="-1"><a tabindex="-1" href="" title="Arts &amp; Sciences Brochure">Arts &amp; Sciences Brochure</a></h3>
+<p>This is a great use of so many brand graphic elements — I see fonts, boundless bar, angles, styled headlines, and a Boundless W. Although the UW gold is not used throughout, this was a great transitional piece from the previous brand palette to the current brand palette. </p>
+</div>
+</div>
+<div class="slide has-text" style="z-index: 4; left: 100%;"><a tabindex="-1" href="" title="Facilities award"><img src="https://www.washington.edu/brand/files/2015/09/Slider_FacilitiesAward3.jpg" title="Facilities award"></a><p></p>
+<div style="left: -200%;">
+<h3 tabindex="-1"><a tabindex="-1" href="" title="Facilities award">Facilities award</a></h3>
+<p>It is fun to see the brand used in unexpected ways. Here the styled headline is used for an award plaque. It is paired with a department signature logo. </p>
+</div>
+</div>
+<div class="slide has-text" style="z-index: 3; left: 100%;"><a tabindex="-1" href="" title="Professional &amp; Continuing Education building sign"><img src="https://www.washington.edu/brand/files/2015/09/Slider_PCESign3.jpg" title="Professional &amp; Continuing Education building sign"></a><p></p>
+<div style="left: -200%;">
+<h3 tabindex="-1"><a tabindex="-1" href="" title="Professional &amp; Continuing Education building sign">Professional &amp; Continuing Education building sign</a></h3>
+<p>This is a great combination of the Boundless W and the departmental signature logo. Plus, it is fun to see the brand being used for environmental graphic applications.</p>
+</div>
+</div>
+<div class="slide has-text" style="z-index: 2; left: 100%;"><a tabindex="-1" href="" title="Admissions info sheets"><img src="https://www.washington.edu/brand/files/2015/09/Slider_InfoSheets3.jpg" title="Admissions info sheets"></a><p></p>
+<div style="left: -200%;">
+<h3 tabindex="-1"><a tabindex="-1" href="" title="Admissions info sheets">Admissions info sheets</a></h3>
+<p>Photography is the perfect way to add vibrancy to your designs. Although the brand color palette is limited to UW colors, there is no limit on ways to use colorful photos to liven up your designs. </p>
+</div>
+</div>
+<div class="slide has-text" style="z-index: 1; left: 100%;"><a tabindex="-1" href="" title="Report to Contibutors financials"><img src="https://www.washington.edu/brand/files/2015/09/Slider_RTCFinancials3.jpg" title="Report to Contibutors financials"></a><p></p>
+<div style="left: -200%;">
+<h3 tabindex="-1"><a tabindex="-1" href="" title="Report to Contibutors financials">Report to Contibutors financials</a></h3>
+<p>Even charts and graphs should be designed with the brand graphic elements. This spread shows some tricks to utilizing the UW palette for displaying financial data. </p>
+</div>
+</div>
+<div class="slide has-text" style="z-index: 0;"><a tabindex="-1" href="" title="UW Visitor Guide brochure"><img src="https://www.washington.edu/brand/files/2015/09/Slider_VisitorsGuide3.jpg" title="UW Visitor Guide brochure"></a><p></p>
+<div>
+<h3 tabindex="-1"><a tabindex="-1" href="" title="UW Visitor Guide brochure">UW Visitor Guide brochure</a></h3>
+<p>The brand elements work best when the layouts are simple and clean. Use bold, beautiful or human photography (see Boundless photo guide section) to capture attention. Then emphasize your content with bold headline treatments and that large Boundless W. </p>
+</div>
+</div>
+<a tabindex="-1" href="#" class="uw-slideshow-controls next"></a><a tabindex="-1" href="#" class="uw-slideshow-controls previous"></a><ul class="slider-dots slider-dots-slideshow-1777"><li class=""></li><li class=""></li><li class=""></li><li class=""></li><li class=""></li><li class=""></li><li class="select-dot"></li></ul><a tabindex="-1" class="fullscreen" href="#">Fullscreen</a></div>
+</div>
+    </div> -->
   </body>
+</div>
 {% endblock %}

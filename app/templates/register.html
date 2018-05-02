@@ -1,4 +1,4 @@
-{% extends "navbar.html" %}
+{% extends "header.html" %}
 
 {% block content %}
 <div class="container">
@@ -20,6 +20,13 @@
           {% endfor %}
       </p>
       <p>
+          {{ form.institution.label }}<br>
+          {{ form.institution(size=64) }}<br>
+          {% for error in form.institution.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+          {% endfor %}
+      </p>
+      <p>
           {{ form.password.label }}<br>
           {{ form.password(size=32) }}<br>
           {% for error in form.password.errors %}
@@ -33,7 +40,7 @@
           <span style="color: red;">[{{ error }}]</span>
           {% endfor %}
       </p>
-      <p>{{ form.submit() }}</p>
+      <a class="uw-btn" href="#" onclick="$(this).closest('form').submit()">Submit<a/>
   </form>
 <div>
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends "navbar.html" %}
+{% extends "header.html" %}
 
 {% block content %}
 <div class="container">
@@ -8,7 +8,7 @@
     <h4>Select file for upload and optionally choose processing parameters</h4>
     <p>Default processing parameters: High pass cutoff 20 hz, Low pass cutoff 10 Hz, and 5 calculated synergies</p>
     <form action="" method=POST enctype=multipart/form-data>
-    <button type=button onclick="filterParameters()">Advanced</button>
+    <a class="uw-btn" onclick="filterParameters()">Advanced</a>
     <div id = 'filter'>
       <h4>Select Parameters</h4>
       <p><input id="high" type="number" name="high" value="20"> Highpass Filter Cutoff
@@ -16,7 +16,7 @@
       <p><input id="syn" type="number" name="syn" value="5"> Number of Synergies
       <p><input id='file_hash' type="hidden" name="file_hash" value={{name}}>
     </div>
-    <input type=submit value=Submit>
+    <a class="uw-btn" href="#" onclick="$(this).closest('form').submit()">Submit<a/>
     </form>
     <script>
     var filteringParameters = document.getElementById('filter');

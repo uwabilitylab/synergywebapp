@@ -1,69 +1,123 @@
+@font-face {
+    font-family: "EncodeSans",sans-serif; /*a name to be used later*/
+    src: url('static/fonts/Encode_Sans_Normal/EncodeSansCompressed-900-Black.ttf'); /*URL to font*/
+    /* src: url('static/fonts/Encode_Sans_Normal/encodesansnormal-900-black-webfont.woff') format('woff'); */
+}
+
+@font-face {
+    font-family: "UniSans",sans-serif; /*a name to be used later*/
+    src: url('static/fonts/UniSans/Fontfabric_UniSansBook.otf'); /*URL to font*/
+    /* src: url('static/fonts/Encode_Sans_Normal/encodesansnormal-900-black-webfont.woff') format('woff'); */
+}
+
 .navbar-default {
   background-color: #4b2e83;
   border-color: #85754d;
+  font-family: "EncodeSans",sans-serif;
 }
 .navbar-default .navbar-brand {
   color: #ffffff;
+  font-family: "EncodeSans",sans-serif;
 }
 .navbar-default .navbar-brand:hover,
 .navbar-default .navbar-brand:focus {
   color: #d9d9d9;
+  font-family: "EncodeSans",sans-serif;
 }
 .navbar-default .navbar-text {
   color: #ffffff;
+  font-family: "EncodeSans",sans-serif;
 }
 .navbar-default .navbar-nav > li > a {
   color: #ffffff;
+  font-family: "EncodeSans",sans-serif;
 }
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li > a:focus {
   color: #d9d9d9;
+  font-family: "EncodeSans",sans-serif;
 }
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
   color: #d9d9d9;
   background-color: #85754d;
+  font-family: "EncodeSans",sans-serif;
 }
 .navbar-default .navbar-nav > .open > a,
 .navbar-default .navbar-nav > .open > a:hover,
 .navbar-default .navbar-nav > .open > a:focus {
   color: #d9d9d9;
   background-color: #85754d;
+  font-family: "EncodeSans",sans-serif;
 }
 .navbar-default .navbar-toggle {
   border-color: #85754d;
+  font-family: "EncodeSans",sans-serif;
 }
 .navbar-default .navbar-toggle:hover,
 .navbar-default .navbar-toggle:focus {
   background-color: #85754d;
+  font-family: "EncodeSans",sans-serif;
 }
 .navbar-default .navbar-toggle .icon-bar {
   background-color: #ffffff;
+  font-family: "EncodeSans",sans-serif;
 }
 .navbar-default .navbar-collapse,
 .navbar-default .navbar-form {
   border-color: #ffffff;
+  font-family: "EncodeSans",sans-serif;;
 }
 .navbar-default .navbar-link {
   color: #ffffff;
+  font-family: "EncodeSans",sans-serif;
 }
 .navbar-default .navbar-link:hover {
   color: #d9d9d9;
+  font-family: "EncodeSans",sans-serif;
 }
 
 @media (max-width: 767px) {
   .navbar-default .navbar-nav .open .dropdown-menu > li > a {
     color: #ffffff;
+    font-family: "EncodeSans",sans-serif;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
   .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
     color: #d9d9d9;
+    font-family: "EncodeSans",sans-serif;
   }
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
   .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
     color: #d9d9d9;
     background-color: #85754d;
+    font-family: "EncodeSans",sans-serif;
   }
+}
+
+.navbar-default .navbar-nav {
+    font-family: "EncodeSans",sans-serif;
+}
+
+
+.body {
+    font-family: "EncodeSans",sans-serif;
+}
+
+.h1 {
+    font-family: "UniSans",sans-serif;
+}
+
+.h2 {
+    font-family: "UniSans",sans-serif;
+}
+
+.h3 {
+    font-family: "UniSans",sans-serif;
+}
+
+.h4 {
+    font-family: "UniSans",sans-serif;
 }

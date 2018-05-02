@@ -1,18 +1,16 @@
-{% extends "navbar.html" %}
+{% extends "header.html" %}
 
 {% block content %}
 <div class="container">
   <div class="page-header">
     <h1>Synergy Calculator</h1>
-    <h4>Upload your unprocessed EMG file here for synergy calculations. Acceptable file formats include xlsx, xls, and csv.</h4>
-    <p>Please make your file the same format as the attached downloadable file</p>
-    <a href="example_excel.xlsx" download>Example Template</a>
   </div>
+    <h4>Upload your unprocessed EMG file here for synergy calculations. Acceptable file formats include xlsx, xls, and csv.</h4>
+    <p>Please make your file the same format as the attached downloadable file</p><a href="example_excel.xlsx" download>Example Template</a>
   <body>
-    <h4>Select file for upload</h4>
     <form action="" method=POST enctype=multipart/form-data>
     <input type=file name="file">
-    <input type=submit value=Upload>
+    <a class="uw-btn" href="#" onclick="$(this).closest('form').submit()">Upload<a/>
     </form>
   </body>
 </div>
