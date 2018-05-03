@@ -46,7 +46,7 @@ def step02_processEMG(raw_EMG, aRATE, HP_CO, HP_order, LP_CO, LP_order, filename
     # Yq = np.interp(Xq,pEMG,X)
     pEMG = pEMG/pEMG.max()
     #print(pEMG)
-    pnew = [x for xs in pEMG for x in xs]
+    pnew = np.array([x for xs in pEMG for x in xs], dtype=np.float64)
     #print(pnew.shape())
 
     raw_EMG = raw_EMG/raw_EMG.max()

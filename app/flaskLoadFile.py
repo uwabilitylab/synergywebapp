@@ -2,6 +2,7 @@ import pandas as pd
 from app.process_EMG import step02_processEMG
 import time
 from app.xydatamaker import xycoordinates
+import numpy as np
 # exelfile must be in the following formula
 # excelfile = request.files['file']
 # in order to get the filename to know the correct extension and load w/ pd
@@ -36,14 +37,13 @@ def readFlaskExcel(excelfile, lowpass, highpass):
     columnNames = []
     for i in range(len(column)):
         if 'EMG' in column[i]:
-            xdata['Time %s' %(j)] = loadedfile[column[i-1]]
-            ydata['EMG %s' %(j)] = loadedfile[column[i]]
+            xdata['Time %s' %(j)] = np.array(loadedfile[column[i-1]], dtype=np.float64)
+            ydata['EMG %s' %(j)] = np.array(loadedfile[column[i]], dtype=np.float64)
             aRATE['aRATE %s' %(j)] = int(round(1/((loadedfile[column[i-1]][len(loadedfile[column[i-1]])-1]-loadedfile[column[i-1]][0])/len(loadedfile[column[i-1]]))))
             rawEMG, pEMG = step02_processEMG(ydata['EMG %s' %(j)], aRATE['aRATE %s' %(j)], int(highpass), 4, int(lowpass)  , 4, 'EMG %s' %(j))
             yfilt['EMGFilt %s' %(j)] = pEMG
-            ydata['EMG %s' %(j)] = rawEMG[:,0].tolist()
+            ydata['EMG %s' %(j)] = np.array(rawEMG[:,0].tolist(), dtype=np.float64)
             yfiltarray.append(pEMG)
-            results.append(xycoordinates(xdata['Time %s' %(j)],ydata['EMG %s' %(j)],yfilt['EMGFilt %s' %(j)]))
             columnNames.append(column[i])
 
             j = j + 1;
