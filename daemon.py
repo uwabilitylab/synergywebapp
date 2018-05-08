@@ -66,13 +66,9 @@ while True:
                 # Calculating Synergies
                 WW, tVAF, HH = calculate_Synergies([yfiltarray[i] for i in list1],[1,2,3,4,5,6,7,8], selected_job[3])
 
-                # Update job to processed
-                update_query_done = update(Job).where(Job.job_file_id == selected_job[0]).values(status='processed')
-                conn.execute(update_query_done)
-
                 # Getting variables in proper form for templates
                 muscleNames = [columnNames[i] for i in range(16)]
-                muscleNamesShort = [columnNames[i] for i in range(8)]
+                muscleNamesShort = [columnNames[list1[i]][0:10] for i in range(8)]
                 tVAFlabels = ["1 Synergy","2 Synergies","3 Synergies","4 Synergies","5 Synergies"]
                 labels = ["5","7","9","10","11","12","13","14"]
                 resultsJson = json.dumps(results)
@@ -88,37 +84,40 @@ while True:
                 plotAct(HH, selected_job[4], pp)
                 pp.close()
 
-
-                # with open('app/static/resultcsv/%s.csv' %(selected_job[4]), "w") as f:
-                #     writer = csv.writer(f)
-                #     writer.writerow(["Highpass"])
-                #     writer.writerows(selected_job[2])
-                #     writer.writerow(["Lowpass"])
-                #     writer.writerows(selected_job[1])
-                #     writer.writerow(["Number of Synergies"])
-                #     writer.writerows(selected_job[3])
-                #     writer.writerow(["Muscles included"])
-                #     writer.writerow(list1)
-                #     writer.writerow(['Unfiltered Emg'])
-                #     for i in range(16):
-                #         writer.writerow(ydata['EMG %s' %(i+1)])
-                #     writer.writerow(['Filtered Emg'])
-                #     for i in range(16):
-                #         writer.writerow(yfilt['EMGFilt %s' %(i+1)])
-                #     writer.writerow(["tVAF"])
-                #     writer.writerow(tVAF)
-                #     writer.writerow(["Weights"])
-                #     for item in WW:
-                #         writer.writerows(item)
-                #     writer.writerow(["Activations"])
-                #     for item in HH:
-                #         writer.writerows(item)
+                with open('app/static/resultcsv/%s.csv' %(selected_job[4]), "w") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(["Highpass"])
+                    writer.writerow([int(selected_job[2])])
+                    writer.writerow(["Lowpass"])
+                    writer.writerow([int(selected_job[1])])
+                    writer.writerow(["Number of Synergies"])
+                    writer.writerow([int(selected_job[3])])
+                    writer.writerow(["Muscles included"])
+                    writer.writerow(list1)
+                    writer.writerow(['Unfiltered Emg'])
+                    for i in range(16):
+                        writer.writerow(ydata['EMG %s' %(i+1)])
+                    writer.writerow(['Filtered Emg'])
+                    for i in range(16):
+                        writer.writerow(yfilt['EMGFilt %s' %(i+1)])
+                    writer.writerow(["tVAF"])
+                    writer.writerow(tVAF)
+                    writer.writerow(["Weights"])
+                    for item in WW:
+                        writer.writerows(item)
+                    writer.writerow(["Activations"])
+                    for item in HH:
+                        writer.writerows(item)
 
 
                 with open('pklfiles/%s.pkl' %(selected_job[4]), 'wb') as f:  # Python 3: open(..., 'wb')
                     pickle.dump([resultsJson, WWJson, labels, tVAFJson, tVAFlabels, MNJson, muscleNamesShort], f)
 
                 log_file.write('successfully wrote file')
+
+                # Update job to processed
+                update_query_done = update(Job).where(Job.job_file_id == selected_job[0]).values(status='processed')
+                conn.execute(update_query_done)
 
             else:
                 time.sleep(5)
@@ -136,7 +135,7 @@ while True:
             should_exit = True
 
         # send_error_email(e)
-
+    
         if should_exit:
             conn.close()
             break

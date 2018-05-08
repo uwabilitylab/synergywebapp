@@ -10,7 +10,7 @@
   <div class="page-header">
     <h1>Synergy Results</h1>
     <a href='/static/plots/matplots_{{ name }}.pdf' target="_blank" class="uw-btn">Print results</a>
-    <a href='/static/resultcsv/{{ name }}.csv' class="uw-btn" download='/static/resultcsv/{{ name }}.csv'>Download Excel File of Results</a>
+    <a href='/static/resultcsv/{{ name }}.csv' class="uw-btn" download='{{ name }}.csv'>Download Excel File of Results</a>
   </div>
       <head>
         <title>Scatter Chart</title>
@@ -36,7 +36,7 @@
         <div id = 'tVAFs' style="display: none;"></div>
         <div id = 'act' style="display: none; width:100%" class="column2">
           {% for newItem in awnwn %}
-            <h2>{{loop.index}} Synergy Solution - tVAF</h2>
+            <h2>{{loop.index}} Synergy Solution</h2>
             <div>
             {% for item,item2 in newItem %}
               <img src="{{item2}}" alt="Weight" class="row2" onclick="showZoomedImage(event);">
