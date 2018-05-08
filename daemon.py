@@ -24,6 +24,7 @@ import json
 import pickle
 import csv
 
+
 def send_error_email(error):
 
     msg = MIMEText(repr(error))
@@ -109,6 +110,8 @@ while True:
                     for item in HH:
                         writer.writerows(item)
 
+                
+                xdata = ydata = aRATE = yfilt = yfiltarray = results = columnNames = None
 
                 with open('pklfiles/%s.pkl' %(selected_job[4]), 'wb') as f:  # Python 3: open(..., 'wb')
                     pickle.dump([resultsJson, WWJson, labels, tVAFJson, tVAFlabels, MNJson, muscleNamesShort], f)
@@ -148,6 +151,7 @@ while True:
 
     except Exception as e:
         log_file.write('boo other error')
+        print(e)
 
         try:
             error_update = update(Job).where(Job.job_file_id == selected_job[0]).values(status='error')
