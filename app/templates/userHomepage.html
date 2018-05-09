@@ -114,6 +114,8 @@
             <th>Status</th>
             <th>Time Submitted</th>
             <th>View Job Results</th>
+            <th>Printout</th>
+            <th>CSV File</th>
             {% for t in three %}
             <tr>
               <td>{{t.lowpass_cutoff}}</td>
@@ -122,10 +124,22 @@
               <td>{{t.status}}</td>
               <td>{{t.time_submitted}}</td>
               <td>
-                <form action"" method=POST enctype=multipart/form-data>
-                  <input id='job_hash' type="hidden" name="job_hash" value={{t.job_hash}}>
-                <a class="uw-btn btn-sm" href="#" onclick="$(this).closest('form').submit()">Results<a/>
-              </form>
+                {% if "processed" in t.status %}
+                  <form action"" method=POST enctype=multipart/form-data>
+                    <input id='job_hash' type="hidden" name="job_hash" value={{t.job_hash}}>
+                    <a class="uw-btn btn-sm" href="#" onclick="$(this).closest('form').submit()">Results<a/>
+                  </form>
+                {% endif %}
+              </td>
+              <td>
+                {% if "processed" in t.status %}
+                  <a href='/static/plots/matplots_{{ t.job_hash }}.pdf' target="_blank" class="uw-btn btn-sm">Printout</a>
+                {% endif %}
+              </td>
+              <td>
+                {% if "processed" in t.status %}
+                  <a href='/static/resultcsv/{{ t.job_hash }}.csv' class="uw-btn btn-sm" download='{{ t.job_hash }}.csv'>CSV</a>
+                {% endif %}
               </td>
             </tr>
             {% endfor %}

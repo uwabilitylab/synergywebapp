@@ -56,7 +56,8 @@ while True:
                 excel = "." + selected_file[0]
 
                 # Update job to processing
-                update_query_pro = update(Job).where(Job.job_file_id == selected_job[0]).values(status='processing')
+                # update_query_pro = update(Job).where(Job.job_file_id == selected_job[0]).values(status='processing')
+                update_query_pro = update(Job).where(Job.job_hash == selected_job[4]).values(status='processing')
                 processing = conn.execute(update_query_pro)
 
                 # Processing file
@@ -90,24 +91,32 @@ while True:
                     writer.writerow([int(selected_job[2])])
                     writer.writerow(["Lowpass"])
                     writer.writerow([int(selected_job[1])])
-                    writer.writerow(["Number of Synergies"])
+                    writer.writerow(["Max Number of Synergies"])
                     writer.writerow([int(selected_job[3])])
                     writer.writerow(["Muscles included"])
                     writer.writerow(list1)
                     writer.writerow(['Unfiltered Emg'])
-                    for i in range(16):
+                    for i in range(len(ydata)):
+                        writer.writerow(['EMG %s' %(i+1)])
                         writer.writerow(ydata['EMG %s' %(i+1)])
                     writer.writerow(['Filtered Emg'])
-                    for i in range(16):
+                    for i in range(len(yfilt)):
+                        writer.writerow(['EMGFilt %s' %(i+1)])
                         writer.writerow(yfilt['EMGFilt %s' %(i+1)])
                     writer.writerow(["tVAF"])
                     writer.writerow(tVAF)
                     writer.writerow(["Weights"])
+                    i = 1
                     for item in WW:
+                        writer.writerow(["Synergy Solution %s" %(i)])
                         writer.writerows(item)
+                        i = i + 1
                     writer.writerow(["Activations"])
+                    i = 1
                     for item in HH:
+                        writer.writerow(["Synergy Solution %s" %(i)])
                         writer.writerows(item)
+                        i = i + 1
 
 
                 with open('pklfiles/%s.pkl' %(selected_job[4]), 'wb') as f:  # Python 3: open(..., 'wb')
@@ -116,7 +125,8 @@ while True:
                 log_file.write('successfully wrote file')
 
                 # Update job to processed
-                update_query_done = update(Job).where(Job.job_file_id == selected_job[0]).values(status='processed')
+                # update_query_done = update(Job).where(Job.job_file_id == selected_job[0]).values(status='processed')
+                update_query_done = update(Job).where(Job.job_hash == selected_job[4]).values(status='processed')
                 conn.execute(update_query_done)
 
             else:
@@ -135,7 +145,7 @@ while True:
             should_exit = True
 
         # send_error_email(e)
-    
+
         if should_exit:
             conn.close()
             break
