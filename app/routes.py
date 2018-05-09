@@ -139,7 +139,7 @@ def parameterSelection(name):
         address = request.remote_addr
         timeDigest= datetime.datetime.now(tz=None)
         timeFormat = timeDigest.strftime("%Y-%m-%d %H:%M:%S.%f")
-        j = Job(job_file_id=name, lowpass_cutoff=low, highpass_cutoff=high, synergy_number=numSyn, status='submitted', processed_file_path="/Users/claire_mit/Documents/Steele_Lab/SynergyWebApp/", ip_address=address, time_submitted=timeDigest)
+        j = Job(job_file_id=name, lowpass_cutoff=low, highpass_cutoff=high, synergy_number=numSyn, status='submitted', processed_file_path=app.config['UPLOAD_FOLDER'], ip_address=address, time_submitted=timeDigest)
         jh = j.set_job_hash(''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(50))
 )
         db.session.add(j)
@@ -178,9 +178,9 @@ def result(name):
     with open('pklfiles/%s.pkl' %(name), 'rb') as f:  # Python 3: open(..., 'rb')
         resultsJson, WWJson, labels, tVAFJson, tVAFlabels, MNJson, muscleNamesShort = pickle.load(f)
 
-    fn = open(os.path.join('/Users/claire_mit/Documents/Steele_Lab/SynergyWebApp/app/static/plots/EMG_Plots_%s' %(name), 'filenames.txt'),'r')
-    an = open(os.path.join('/Users/claire_mit/Documents/Steele_Lab/SynergyWebApp/app/static/plots/Act_Plots_%s' %(name), 'filenames.txt'),'r')
-    wn = open(os.path.join('/Users/claire_mit/Documents/Steele_Lab/SynergyWebApp/app/static/plots/Wei_Plots_%s' %(name), 'filenames.txt'),'r')
+    fn = open(os.path.join(app.config['PLOT_FOLDER'] + '/EMG_Plots_%s' %(name), 'filenames.txt'),'r')
+    an = open(os.path.join(app.config['PLOT_FOLDER'] + '/Act_Plots_%s' %(name), 'filenames.txt'),'r')
+    wn = open(os.path.join(app.config['PLOT_FOLDER'] + '/Wei_Plots_%s' %(name), 'filenames.txt'),'r')
 
     ann = []
     for line in an:

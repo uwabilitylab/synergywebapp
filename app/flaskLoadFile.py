@@ -46,7 +46,7 @@ def readFlaskExcel(excelfile, lowpass, highpass):
             yfilt['EMGFilt %s' %(j)] = pEMG
             ydata['EMG %s' %(j)] = rawEMG[:,0].tolist()
             yfiltarray.append(pEMG)
-            results.append(xycoordinates(xdata['Time %s' %(j)],ydata['EMG %s' %(j)],yfilt['EMGFilt %s' %(j)]))
+            #results.append(xycoordinates(xdata['Time %s' %(j)],ydata['EMG %s' %(j)],yfilt['EMGFilt %s' %(j)]))
             columnNames.append(column[i])
 
             j = j + 1;
