@@ -25,6 +25,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 import json
 import pickle
 import csv
+import gc
 
 plt.style.use('synergywebapp')
 
@@ -67,6 +68,10 @@ while True:
 
                 # Processing file
                 xdata, ydata, aRATE, yfilt, yfiltarray, results, columnNames = readFlaskExcel(excel, selected_job[1], selected_job[2])
+
+                # Force a garbage collection
+                gc.collect()
+
                 list1 = [4,6,8,9,10,11,12,13]
 
                 # Calculating Synergies
