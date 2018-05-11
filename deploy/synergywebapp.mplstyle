@@ -1,0 +1,9 @@
+axes.titlesize : 24
+axes.labelsize : 20
+xtick.labelsize : 16
+ytick.labelsize : 16
+axes.linewidth : 1.5
+xtick.major.width : 1.5
+ytick.major.width : 1.5
+patch.linewidth : 2
+lines.linewidth : 0.25

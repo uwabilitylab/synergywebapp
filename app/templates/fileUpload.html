@@ -14,6 +14,10 @@
    .file_preview td, .file_preview th {
 	   border: solid black 1px;
    }
+   div.file_preview {
+    overflow-x: scroll;
+   }
+
   </style>
   <script type="text/javascript" src="/static/js/fileUpload.js"></script>
  </head>
@@ -29,7 +33,7 @@
     <form id="fileform" method=POST enctype="multipart/form-data" autocomplete="off">
      <input type="file" name="file" id="fileuploadel" required="required" />
      <input type="submit" value="Upload"/>
-     <div id="file_preview"></div>
+     <div id="file_preview" width=100%></div>
 
      <!-- SELECT element you can clone and add to the EMG columns -->
      <select id="muscles" required="required" hidden="false">
