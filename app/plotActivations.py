@@ -5,7 +5,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 # This file is used to generate the EMG raw and processed figures.
 # This is done because loading all the individual data points at a time takes too long.
-def plotAct(HH, jobfile, pp):
+def plotAct(xdata, HH, jobfile, pp):
 
     os.mkdir('app/static/plots/Act_Plots_%s' %(jobfile))
 
@@ -22,12 +22,11 @@ def plotAct(HH, jobfile, pp):
             filename = 'app/static/plots/Act_Plots_%s/' %(jobfile) + jobfile + 'Act_%s' %(k) + '.png'
             filenames.write('/static/plots/Act_Plots_%s/' %(jobfile) + jobfile + 'Act_%s' %(k) + '.png' + '\n')
 
-            weight = plt.plot(HH[i][j], color = colors[j], linewidth = .5)
-            plt.ylabel('Amplitude', fontsize=15)
-            plt.title('Activation %s Synergy Solution, Synergy %s' %(i+1,j+1))
+            weight = plt.plot(xdata['Time %s' %(1)], HH[i][j], color = colors[j])
+            plt.ylabel('Amplitude')
+            plt.xlabel('Time')
+            plt.title('%s Synergy Solution, Synergy %s Activation' %(i+1,j+1))
             plt.savefig(filename, bbox_inches='tight')
             pp.savefig(fig)
             plt.close()
             k = k + 1
-
-    

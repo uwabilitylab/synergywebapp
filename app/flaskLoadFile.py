@@ -11,19 +11,22 @@ def readFlaskExcel(excelfile, lowpass, highpass):
     # print(excelfile)
     # filenameEF = excelfile.filename
 
-    # if excelfile.endswith(".csv"):
-    # # if filenameEF.endswith(".csv"):
-    #     loadedfile = pd.read_csv(excelfile)
-    #     # try numpy.load text
-    # elif excelfile.endswith(".xlsx") or excelfile.endswith(".xls"):
-    # # elif filenameEF.endswith(".xlsx") or filenameEF.endswith(".xls"):
-    #     loadedfile = pd.read_excel(excelfile)
-    #     #try python converter to loadtext format openpy....
-    # else:
-    #     print("Not an acceptable file format")
+    if excelfile.endswith(".csv"):
+    # if filenameEF.endswith(".csv"):
+        loadedfile = pd.read_csv(excelfile)
+        # try numpy.load text
+    elif excelfile.endswith(".tsv"):
+        loadedfile = pd.read_csv(excelfile, delimiter='\t')
+
+    elif excelfile.endswith(".xlsx") or excelfile.endswith(".xls"):
+    # elif filenameEF.endswith(".xlsx") or filenameEF.endswith(".xls"):
+        loadedfile = pd.read_excel(excelfile, sheet_name = 0)
+        #try python converter to loadtext format openpy....
+    else:
+        print("Not an acceptable file format")
     # xlsx = pd.ExcelFile(excelfile)
     # excelfile = "." + excelfile
-    loadedfile = pd.read_excel(excelfile, sheet_name = 0)
+    # loadedfile = pd.read_excel(excelfile, sheet_name = 0)
     column = loadedfile.columns
 
     xdata = dict()

@@ -69,4 +69,7 @@ def page_not_found(e):
 def internal_server_error(e):
     return render_template('500.html'), 500
 
+@app.errorhandler(413)
+def internal_server_error(e):
+    return render_template('413.html'), 413
 # import routes, models, forms

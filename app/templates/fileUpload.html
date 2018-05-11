@@ -1,17 +1,61 @@
 {% extends "header.html" %}
 
 {% block content %}
+<html>
+ <head>
+  <meta charset="utf8"/>
+  <title>File upload preview</title>
+
+  <style type="text/css">
+   .file_preview {
+	   border-collapse: collapse;
+
+   }
+   .file_preview td, .file_preview th {
+	   border: solid black 1px;
+   }
+  </style>
+  <script type="text/javascript" src="/static/js/fileUpload.js"></script>
+ </head>
 <div class="container">
   <div class="page-header">
     <h1>Synergy Calculator</h1>
   </div>
-    <h4>Upload your unprocessed EMG file here for synergy calculations. Acceptable file formats include xlsx, xls, and csv.</h4>
-    <p>Please make your file the same format as the attached downloadable file</p><a href="example_excel.xlsx" download>Example Template</a>
+    <h4>Upload your unprocessed EMG file here for synergy calculations. Acceptable file formats include csv and tsv.</h4>
+    <p>Please make your file the same format as the attached downloadable file. Each EMG column header must have "EMG" and unique identifiers that identify it from other EMG columns. Additionally, each EMG column must immediately follow a time column.</p>
+    <a href="static/example_excel.csv" download>Example Template</a>
   <body>
-    <form action="" method=POST enctype=multipart/form-data>
-    <input type=file name="file">
-    <a class="uw-btn" href="#" onclick="$(this).closest('form').submit()">Upload<a/>
+
+    <form id="fileform" method=POST enctype="multipart/form-data" autocomplete="off">
+     <input type="file" name="file" id="fileuploadel" required="required" />
+     <input type="submit" value="Upload"/>
+     <div id="file_preview"></div>
+
+     <!-- SELECT element you can clone and add to the EMG columns -->
+     <select id="muscles" required="required" hidden="false">
+      <option value="">Select a muscle</option>
+      <option value="gastroc">Gastrocnemius</option>
+      <option value="bicep">Bicep</option>
+     </select>
     </form>
+
+    <script type="text/javascript">
+
+    //called when page finishes loading
+    var filePreview;
+    window.addEventListener('DOMContentLoaded', function(e) {
+    	//get a handle on the file input, as well as the element we're going to put the preview in
+    	var fileInput = document.getElementById('fileuploadel'),
+    	filePreviewEl = document.getElementById('file_preview');
+    	fileInput.addEventListener('change', function(fe) {  //create the preview when the user selects a file
+    		filePreview.readFile(0, 10);  //read 10 lines
+    	});
+
+    	filePreview = new FilePreview(fileInput, filePreviewEl);
+    });
+
+    </script>
   </body>
 </div>
+</html>
 {% endblock %}

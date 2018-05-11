@@ -1,5 +1,33 @@
 {% extends "header.html" %}
 
 {% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1>About this project</h1>
+  </div>
+  <body>
+    <h3>Introduction</h3>
+    <p>Individuals with cerebral palsy (CP) have altered muscle activity during walking compared to their typically-developing peers, resulting from a brain injury at or near the time of birth. Because every brain injury is unique, patient-specific differences in motor control arise for individuals with CP. Quantifying these changes in control is challenging. Muscle synergies have been used to quantify a patient’s motor control by finding weighted groupings of muscles from experimentally monitored electromyography (EMG) data and have been shown to be associated with impairment level and treatment outcomes [1, 2], suggesting that synergy analysis may provide clinically useful information about motor control. However, calculation of synergies requires custom processing scripts involving EMG processing and matrix factorization algorithms. Moreover, the results of synergy analysis can be difficult to interpret and display. For these reasons it can be difficult for clinicians to implement muscle synergies as a metric of patient-specific motor control. Thus, the goal of this research was to develop an open-source web application enabling clinicians to upload unprocessed EMG data and return synergy outputs in both a downloadable format and a web-based visual representation.
+    </p>
+    <h3>Methods</h3>
+    <p>This work developed a website for EMG data processing and a user-interface to display the results of the synergy analyses. A robust, open-source language, with existing data processing packages was needed for this project to ensure this website could be open-source and would have fast processing times. For these reasons, Python was chosen to be the server-side language. JavaScript, HTML, and CSS were used on the client side to effectively display the generated results.
+    </p>
+    <h4>Synergy Calculation</h4>
+    <p>To calculate synergies, the user uploads the unprocessed EMG data. The Python scripts have been developed to be able to accept multiple forms of Excel files, and a template is downloadable on the website as an example for the user. The EMG data is processed according to recommended standards for synergy calculations [3]: high-pass filtered, rectified, low-pass filtered, and normalized to the maximum of each muscle. Default filtering parameters were 20 hz high-pass and 10 hz low-pass. Because filtering parameters affect synergy outputs, advanced options allow the user to customize the filtering parameters.
+    </p>
+    <p>The processed EMG data are then submitted into additional Python scripts for calculation of synergies. Synergies are calculated through non-negative matrix factorization of the processed EMG signal. This decomposition results in two matrices for each synergy solution: the weights and activations for a pre-determined number of synergies. When multiplied together, these matrices create a reconstruction of the EMG data. The accuracy of the reconstruction is quantified by the total variance accounted for by the computed number of synergies and the variance accounted for by each synergy. By default, the program calculates solutions for one through five synergies. Advanced options allow the user to specify the maximum number of synergies.
+    </p>
+    <h4>Website Development</h4>
+    <p>This website was developed through the Python microframework <a href="http://flask.pocoo.org/">Flask</a> and the website's framework, as well as some of the Python scripts follow the work of <a href="https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world">Miguel Grinberg</a>. The CSS style files and HTML header template are derivates of the <a href="https://www.washington.edu/brand/web-2/html-web-components/">University of Washington's</a>. This website is currently hosted on Amazon Web Services with NGINX.
+    </p>
+    <p>Flask was chosen as the underlying framework due to it's integration of security features and databases all within python. All development was initially done on localhost before deploying the website to AWS. Initially the application began as a set of linear steps that allowed the user to upload a file and view the results. This was implemented with a single SQLite table. As the project progressed, it became clear that more features were needed for the project to be robust enough for continued use. User logins were implemented to allow individual users to submit files and be the only user accessible to those results. This allowed for users to view past jobs that they had submitted and view previous results. Implementing this required the additional step of adding in an additional two tables into the SQLite database. Additionally a downloadable csv file of the synergy results was added in so that the user could use the results in their own processing scripts. Each job also produces a pdf of the results that is structed to be more clinically friendly.
+    </p>
+    <h3>Results</h3>
+    <p>After processing, the website graphically displays the results of the synergy analysis. The display interface has been iterated upon to produce results that are easily understood by the user. Additionally, this website has been developed to be used alongside a database so that users can return to their results in the future. This also allows the possibility of using the collective results from multiple individuals to understand more about the variability in motor control for those with CP. Each time that the user submits an input EMG file, the unprocessed, processed, filtering parameters, and synergy outputs are all saved in the database. Each synergy solution is displayed by presenting the weighting of every muscle in each synergy. Additionally, the application shows how accurately the synergies reconstruct the electromyography signals. Generated results from the application can be exported as a report for the patient and clinician reference. A simplified report may allow the patient to have a better understanding of how muscle synergies relate to their impaired movement.
+    </p>
+    <h3>References</h3>
+    <p><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/dmcn.13126">1.	Schwartz MH, et. al Dev Med Child Neurol 58, 11, 1139-1145</a></p>
+    <p><a href="https://onlinelibrary.wiley.com/doi/full/10.1111/dmcn.12826">2.	Steele KM, et. al Dev Med Child Neurol 57, 12, 1176-1182</a></p>
+    <p><a href="https://www.frontiersin.org/articles/10.3389/fncom.2017.00050/full">3.	Shuman BR, et. al Front Comput Neurosci 11, 50</a></p>
 
 {% endblock %}

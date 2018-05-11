@@ -126,6 +126,7 @@ def doimport():
 
     return render_template('fileUpload.html')
 
+
 @app.route("/parameterSelection/<string:name>", methods=['GET', 'POST'])
 @login_required
 @check_confirmed
@@ -139,7 +140,7 @@ def parameterSelection(name):
         address = request.remote_addr
         timeDigest= datetime.datetime.now(tz=None)
         timeFormat = timeDigest.strftime("%Y-%m-%d %H:%M:%S.%f")
-        j = Job(job_file_id=name, lowpass_cutoff=low, highpass_cutoff=high, synergy_number=numSyn, status='submitted', processed_file_path="/Users/claire_mit/Documents/Steele_Lab/SynergyWebApp/", ip_address=address, time_submitted=timeDigest)
+        j = Job(job_file_id=name, lowpass_cutoff=low, highpass_cutoff=high, synergy_number=numSyn, status='submitted', processed_file_path=app.config['UPLOAD_FOLDER'], ip_address=address, time_submitted=timeDigest)
         jh = j.set_job_hash(''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(50))
 )
         db.session.add(j)
@@ -174,17 +175,28 @@ def status(name):
 def result(name):
 
     user = current_user.username
+    #
+    # with open('pklfiles/%s.pkl' %(name), 'rb') as f:  # Python 3: open(..., 'rb')
+    #     resultsJson, WWJson, labels, tVAFJson, tVAFlabels, MNJson, muscleNamesShort = pickle.load(f)
+
 
     with open('pklfiles/%s.pkl' %(name), 'rb') as f:  # Python 3: open(..., 'rb')
-        resultsJson, WWJson, labels, tVAFJson, tVAFlabels, MNJson, muscleNamesShort = pickle.load(f)
+        [tVAF, vaf] = pickle.load(f)
 
-    fn = open(os.path.join('/Users/claire_mit/Documents/Steele_Lab/SynergyWebApp/app/static/plots/EMG_Plots_%s' %(name), 'filenames.txt'),'r')
-    an = open(os.path.join('/Users/claire_mit/Documents/Steele_Lab/SynergyWebApp/app/static/plots/Act_Plots_%s' %(name), 'filenames.txt'),'r')
-    wn = open(os.path.join('/Users/claire_mit/Documents/Steele_Lab/SynergyWebApp/app/static/plots/Wei_Plots_%s' %(name), 'filenames.txt'),'r')
+    tVAF = [round(elem, 2) for elem in tVAF]
+
+    # vaf = [round(elem, 2) for elem in vaf]
+
+    print(tVAF)
+    print(vaf)
+
+    fn = open(os.path.join(app.config['PLOT_FOLDER'] + '/EMG_Plots_%s' %(name), 'filenames.txt'),'r')
+    an = open(os.path.join(app.config['PLOT_FOLDER'] + '/Act_Plots_%s' %(name), 'filenames.txt'),'r')
+    wn = open(os.path.join(app.config['PLOT_FOLDER'] + '/Wei_Plots_%s' %(name), 'filenames.txt'),'r')
+    tn = open(os.path.join(app.config['PLOT_FOLDER'] + '/tVAF_Plots_%s' %(name), 'filenames.txt'),'r')
 
     ann = []
     for line in an:
-        print(line)
         ann.append(line)
 
     wnn = []
@@ -194,7 +206,6 @@ def result(name):
     # ann = an.read()
     # wnn = wn.read()
     awn = []
-    print(len(ann))
     j = 1
     for i in range(len(ann)):
         awn_one = [ann[i], wnn[i]]
@@ -211,10 +222,12 @@ def result(name):
         awnwn.append(awnone)
         j = j + 1
 
+    tnn = []
+    for line in tn:
+        tnn.append(line)
 
-    return render_template('basic9.html', name = name, resultsJson = resultsJson,
-            WWJson = WWJson, labels = labels, tVAFJson = tVAFJson,
-            tVAFlabels = tVAFlabels, MNJson = MNJson, muscleNamesShort = muscleNamesShort, fn = fn, awnwn = awnwn)
+
+    return render_template('basic9.html', name = name, fn = fn, awnwn = awnwn, tnn=tnn, tVAF = tVAF, vaf = vaf)
 
 # @app.route("/uploading", methods=['GET', 'POST'])
 # def douploading():
