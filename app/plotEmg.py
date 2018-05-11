@@ -23,17 +23,15 @@ def plotEMG(xdata, ydata, yfilt, jobfile, muscleNames, pp):
         filename = 'app/static/plots/EMG_Plots_%s/' %(jobfile) + jobfile + 'EMG_%s' %(j) + '.png'
         filenames.write('/static/plots/EMG_Plots_%s/' %(jobfile) + jobfile + 'EMG_%s' %(j) + '.png' + '\n')
 
-        raw = plt.plot(xdata['Time %s' %(j)], ydata['EMG %s' %(j)], color = '#d9d9d9', label = 'Raw EMG', linewidth=0.25)
-        filt = plt.plot(xdata['Time %s' %(j)], yfilt['EMGFilt %s' %(j)], color = '#85754d', label = 'Processed EMG', linewidth=0.25)
+        raw = plt.plot(xdata['Time %s' %(j)], ydata['EMG %s' %(j)], color = '#d9d9d9', label = 'Raw EMG')
+        filt = plt.plot(xdata['Time %s' %(j)], yfilt['EMGFilt %s' %(j)], color = '#85754d', label = 'Processed EMG')
         raw_line = mlines.Line2D([], [], color='#d9d9d9',label='Raw EMG')
         filt_line = mlines.Line2D([], [], color='#85754d',label='Processed EMG')
 
         plt.legend(handles=[raw_line, filt_line])
-        plt.xlabel('Time', fontsize=15)
-        plt.ylabel('Amplitude', fontsize=15)
-        plt.title(muscleNames[i], fontsize=20)
+        plt.xlabel('Time')
+        plt.ylabel('Amplitude')
+        plt.title(muscleNames[i])
         plt.savefig(filename, bbox_inches='tight')
         pp.savefig(fig)
         plt.close()
-
-    

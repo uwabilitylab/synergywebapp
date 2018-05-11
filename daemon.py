@@ -18,11 +18,15 @@ from app.flaskSynergies import calculate_Synergies, calculate_tVAF
 from app.plotEmg import plotEMG
 from app.plotActivations import plotAct
 from app.plotWeights import plotWeights
+from app.plotTVAF import plotTVAF
+# from app.vaf import vaf
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import json
 import pickle
 import csv
+
+plt.style.use('synergywebapp')
 
 
 def send_error_email(error):
@@ -66,24 +70,28 @@ while True:
                 list1 = [4,6,8,9,10,11,12,13]
 
                 # Calculating Synergies
-                WW, tVAF, HH = calculate_Synergies([yfiltarray[i] for i in list1],[1,2,3,4,5,6,7,8], selected_job[3])
+                WW, tVAF, HH, vaf = calculate_Synergies([yfiltarray[i] for i in list1],[1,2,3,4,5,6,7,8], selected_job[3])
+
+                # VV = [yfiltarray[i] for i in list1]
+                # vaf = vaf(VV, WW, HH)
 
                 # Getting variables in proper form for templates
                 muscleNames = [columnNames[i] for i in range(16)]
                 muscleNamesShort = [columnNames[list1[i]][0:10] for i in range(8)]
-                tVAFlabels = ["1 Synergy","2 Synergies","3 Synergies","4 Synergies","5 Synergies"]
-                labels = ["5","7","9","10","11","12","13","14"]
-                resultsJson = json.dumps(results)
-                WWJson = json.dumps(WW)
-                tVAFJson = json.dumps(tVAF)
-                MNJson = json.dumps(muscleNames)
-                MNSJson = json.dumps(muscleNamesShort)
+                # tVAFlabels = ["1 Synergy","2 Synergies","3 Synergies","4 Synergies","5 Synergies"]
+                # labels = ["5","7","9","10","11","12","13","14"]
+                # resultsJson = json.dumps(results)
+                # WWJson = json.dumps(WW)
+                # tVAFJson = json.dumps(tVAF)
+                # MNJson = json.dumps(muscleNames)
+                # MNSJson = json.dumps(muscleNamesShort)
 
                 # Generating matplotlib figures of EMG
                 pp = PdfPages('app/static/plots/matplots_%s.pdf' %(selected_job[4]))
                 plotEMG(xdata, ydata, yfilt, selected_job[4], muscleNames, pp)
+                plotTVAF(tVAF, selected_job[4], pp)
                 plotWeights(WW, selected_job[4], muscleNamesShort, pp)
-                plotAct(HH, selected_job[4], pp)
+                plotAct(xdata, HH, selected_job[4], pp)
                 pp.close()
 
                 with open('app/static/resultcsv/%s.csv' %(selected_job[4]), "w") as f:
@@ -119,11 +127,15 @@ while True:
                         writer.writerows(item)
                         i = i + 1
 
-                
-                xdata = ydata = aRATE = yfilt = yfiltarray = results = columnNames = None
+
+                # xdata = ydata = aRATE = yfilt = yfiltarray = results = columnNames = None
+
+                # with open('pklfiles/%s.pkl' %(selected_job[4]), 'wb') as f:  # Python 3: open(..., 'wb')
+                #     pickle.dump([resultsJson, WWJson, labels, tVAFJson, tVAFlabels, MNJson, muscleNamesShort], f)
 
                 with open('pklfiles/%s.pkl' %(selected_job[4]), 'wb') as f:  # Python 3: open(..., 'wb')
-                    pickle.dump([resultsJson, WWJson, labels, tVAFJson, tVAFlabels, MNJson, muscleNamesShort], f)
+                    pickle.dump([tVAF, vaf], f)
+
 
                 log_file.write('successfully wrote file')
 

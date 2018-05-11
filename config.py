@@ -8,6 +8,7 @@ class Config(object):
         'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     #UPLOAD_FOLDER = '/Users/claire_mit/Documents/Steele_Lab/SynergyWebApp/app/csvfiles'
-    BASE_FOLDER = '/mnt/data/www/synergywebapp/'
+    # BASE_FOLDER = '/mnt/data/www/synergywebapp/'
+    BASE_FOLDER = '/Users/claire_mit/Documents/Steele_Lab/SynergyWebApp'
     UPLOAD_FOLDER = BASE_FOLDER + '/app/csvfiles'
     PLOT_FOLDER = BASE_FOLDER + '/app/static/plots'
