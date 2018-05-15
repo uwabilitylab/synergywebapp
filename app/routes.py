@@ -108,6 +108,10 @@ def doimport():
 
 
         excel = request.files['file']
+        include = request.values.getlist('includeAll');
+        # include = request.values.get
+        print(include)
+
         excel.save(os.path.join(app.config['UPLOAD_FOLDER'], excel.filename))
         size = os.stat(os.path.join(app.config['UPLOAD_FOLDER'], excel.filename)).st_size
         f = File(file_user_id=current_user.id, file_size=str(size/1000) + "KB")
@@ -122,16 +126,17 @@ def doimport():
         except:
             pass
 
-        return redirect(url_for('parameterSelection',name=f.file_user_hash))
+        return redirect(url_for('parameterSelection',name=f.file_user_hash,muscles=include))
 
     return render_template('fileUpload.html')
 
 
-@app.route("/parameterSelection/<string:name>", methods=['GET', 'POST'])
+@app.route("/parameterSelection/<string:name>/<string:muscles>", methods=['GET', 'POST'])
 @login_required
 @check_confirmed
-def parameterSelection(name):
+def parameterSelection(name, muscles):
     user = current_user.username
+    print(muscles)
 
     if request.method == 'POST':
         low = request.form['low']
@@ -141,8 +146,9 @@ def parameterSelection(name):
         timeDigest= datetime.datetime.now(tz=None)
         timeFormat = timeDigest.strftime("%Y-%m-%d %H:%M:%S.%f")
         j = Job(job_file_id=name, lowpass_cutoff=low, highpass_cutoff=high, synergy_number=numSyn, status='submitted', processed_file_path=app.config['UPLOAD_FOLDER'], ip_address=address, time_submitted=timeDigest)
-        jh = j.set_job_hash(''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(50))
-)
+        jh = j.set_job_hash(''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(50)))
+        musnames = open(os.path.join(app.config['BASE_FOLDER'] + '/app/static/', '%s.txt' %(jh)), 'w+')
+        musnames.write('%s' %(muscles))
         db.session.add(j)
         db.session.commit()
 

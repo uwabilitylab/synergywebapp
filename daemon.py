@@ -26,6 +26,8 @@ import json
 import pickle
 import csv
 import gc
+import os
+import ast
 
 plt.style.use('synergywebapp')
 
@@ -72,17 +74,21 @@ while True:
                 # Force a garbage collection
                 gc.collect()
 
-                list1 = [4,6,8,9,10,11,12,13]
-
+                # list1 = [4,6,8,9,10,11,12,13]
+                mi = open('app/static/%s.txt' %(selected_job[4]),'r')
+                muin = []
+                for line in mi:
+                    line = ast.literal_eval(line)
+                    muin = [int(i) for i in line]
                 # Calculating Synergies
-                WW, tVAF, HH, vaf = calculate_Synergies([yfiltarray[i] for i in list1],[1,2,3,4,5,6,7,8], selected_job[3])
+                WW, tVAF, HH, vaf = calculate_Synergies([yfiltarray[i] for i in muin], selected_job[3])
 
                 # VV = [yfiltarray[i] for i in list1]
                 # vaf = vaf(VV, WW, HH)
 
                 # Getting variables in proper form for templates
-                muscleNames = [columnNames[i] for i in range(16)]
-                muscleNamesShort = [columnNames[list1[i]][0:10] for i in range(8)]
+                muscleNames = [columnNames[i] for i in range(len(yfiltarray))]
+                muscleNamesShort = [columnNames[muin[i]][0:10] for i in range(len(muin))]
                 # tVAFlabels = ["1 Synergy","2 Synergies","3 Synergies","4 Synergies","5 Synergies"]
                 # labels = ["5","7","9","10","11","12","13","14"]
                 # resultsJson = json.dumps(results)
@@ -108,7 +114,7 @@ while True:
                     writer.writerow(["Max Number of Synergies"])
                     writer.writerow([int(selected_job[3])])
                     writer.writerow(["Muscles included"])
-                    writer.writerow(list1)
+                    writer.writerow(muin)
                     writer.writerow(['Unfiltered Emg'])
                     for i in range(len(ydata)):
                         writer.writerow(['EMG %s' %(i+1)])

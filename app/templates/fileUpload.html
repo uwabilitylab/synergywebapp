@@ -14,7 +14,8 @@
    .file_preview td, .file_preview th {
 	   border: solid black 1px;
    }
-   div.file_preview {
+   .file_preview div{
+    /* width: 100%; */
     overflow-x: scroll;
    }
 
@@ -32,15 +33,15 @@
 
     <form id="fileform" method=POST enctype="multipart/form-data" autocomplete="off">
      <input type="file" name="file" id="fileuploadel" required="required" />
-     <input type="submit" value="Upload"/>
-     <div id="file_preview" width=100%></div>
+     <div id="file_preview" style="overflow-x: scroll;"></div>
 
      <!-- SELECT element you can clone and add to the EMG columns -->
-     <select id="muscles" required="required" hidden="false">
+     <!-- <select id="muscles" required="required">
       <option value="">Select a muscle</option>
       <option value="gastroc">Gastrocnemius</option>
       <option value="bicep">Bicep</option>
-     </select>
+     </select>-->
+     <a class="uw-btn" href="#" onclick="$(this).closest('form').submit()">Upload</a>
     </form>
 
     <script type="text/javascript">
@@ -52,12 +53,21 @@
     	var fileInput = document.getElementById('fileuploadel'),
     	filePreviewEl = document.getElementById('file_preview');
     	fileInput.addEventListener('change', function(fe) {  //create the preview when the user selects a file
-    		filePreview.readFile(0, 10);  //read 10 lines
+    		filePreview.readFile(0, 5);  //read 10 lines
     	});
 
     	filePreview = new FilePreview(fileInput, filePreviewEl);
     });
 
+    var table = document.getElementById("table_file_preview");
+
+    var tr = document.createElement("tr");
+    var td = document.createElement("td");
+
+
+    td.appendChild(document.getElementById("muscles"));
+    tr.appendChild(td);
+    table.appendChild(tr);
     </script>
   </body>
 </div>

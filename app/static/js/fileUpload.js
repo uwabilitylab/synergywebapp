@@ -30,6 +30,30 @@ function _createElement(tagName, attributes, childNodes) {
   }
   return el;
 }
+function _getElement(tagName, attributes) {
+  var el = document.createElement(tagName);
+  // for(var name in attributes) {
+  //   el.setAttribute(name, attributes[name]);
+  // }
+  el.appendChild(document.getElementById(attributes));
+
+  // if(childNodes instanceof HTMLElement) {
+  //   el.appendChild(childNodes);
+  // } else if(childType == 'string' || childType == 'number') {
+  //   el.appendChild(document.createTextNode(childNodes));
+  // } else if(childType == 'object') { //i.e. a list of pre-created DOM elements
+  //   if(childNodes instanceof Array) {
+  //     for(var i=0;i<childNodes.length;i++) {
+  //       el.appendChild(childNodes[i])
+  //     }
+  //   } else {
+  //     while(childNodes.firstChild) {
+  //       el.appendChild(childNodes.firstChild);
+  //     }
+  //   }
+  // }
+  return el;
+}
 /**
  * Class for managing a file's preview interface
  * @param HTMLElement container
@@ -55,7 +79,7 @@ FilePreview.prototype.createPreview = function(headerLineIndex, previewLineCount
   while(this.previewContainer.childNodes.length > 0) {
     this.previewContainer.removeChild(this.previewContainer.firstChild);
   }
-  var previewTableEl = _createElement('table', {'class': 'file_preview'});
+  var previewTableEl = _createElement('table', {'class': 'file_preview', 'id': 'table_file_preview'});
 
   //create the column definitions
   var fileTableHeading = _createElement('thead');
@@ -79,6 +103,46 @@ FilePreview.prototype.createPreview = function(headerLineIndex, previewLineCount
     }
     fileTableBody.appendChild(dataRowEl);
   }
+  var includeRowEl = _createElement('tr');
+  var includeColEl;
+  for(var i=0;i<dataCols.length;i++) {
+    includeColEl = document.createElement('td');
+    var tableLabel = _createElement('label', {'class': 'radio'});
+    var but = _createElement('input', {'type': 'checkbox', 'id':String(i), 'name':'includeAll', 'value':String(i)});
+    var lab = _createElement('label', {'for':'include'});
+    lab.innerHTML = 'Include';
+    // but.id = i;
+    // but.type = "radio";
+    // but.name = "include";
+    // but.value = "Muscle" + i+1;
+    // but.label = "Include";
+    // but.innerHTML = 'Include';
+    // tableLabel.appendChild(but);
+    // tableLabel.appendChild(lab);
+    includeColEl.appendChild(but);
+    includeColEl.appendChild(lab);
+    includeRowEl.appendChild(includeColEl);
+  }
+  fileTableBody.appendChild(includeRowEl);
+  var muscleRowEl = _createElement('tr');
+  var muscleColEl;
+  var array = ["", "Ext_Obl", "Rec_Abd", "Add_Mag", "Ten_Fas_Lat", "Glu_Med", "Glu_Max", "Vas_Lat", "Rec_Fem", "Med_Ham", "Lat_Ham", "Gas_Med", "Soleus", "Tib_Ant", "Pre_Bre", "Ere_Spi"];
+  var text = ["Select a muscle", "External Obliques", "Rectus Abdmoninus", "Adductor Magnus", "Tensor Fasciae Latae", "Gluteus Medius", "Glueteus Maximus", "Vastus Lateralis", "Rectus Femoris", "Medial Hamstring", "Lateral Hamstring", "Gastrocnemius Medialis", "Soleus", "Tibialis Anterior", "Peroneus Brevis", "Erector Spinae"];
+  for(var i=0;i<dataCols.length;i++) {
+    muscleColEl = document.createElement('td');
+    var selectList = document.createElement('select');
+    selectList.id = "mySelect";
+
+    for (var j = 0; j < array.length; j++) {
+        var option = document.createElement("option");
+        option.value = array[j];
+        option.text = text[j];
+        selectList.appendChild(option);
+    }
+    muscleColEl.appendChild(selectList);
+    muscleRowEl.appendChild(muscleColEl);
+  }
+  fileTableBody.appendChild(muscleRowEl);
 
   previewTableEl.appendChild(fileTableHeading);
   previewTableEl.appendChild(fileTableBody);

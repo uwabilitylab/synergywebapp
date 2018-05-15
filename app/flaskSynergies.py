@@ -23,7 +23,7 @@ def calculate_vaf(VV,WW,HH):
 
     return round(vaf,2)
 
-def calculate_Synergies(emg, channels, numSyn):
+def calculate_Synergies(emg, numSyn):
 
     WW = []
     WWsim = []

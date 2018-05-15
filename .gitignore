@@ -9,3 +9,4 @@ misc
 daemon.log
 data.sqlite
 app/csvfiles/*.xls*
+app/static/*.txt
