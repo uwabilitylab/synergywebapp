@@ -37,25 +37,7 @@ import sqlite3
 
 from app import app, db
 from app.models import User, File, Job
-#
-#
-# basedir = os.path.abspath(os.path.dirname(__file__))
-#
-# app = Flask(__name__)
-# app.config['SECRET_KEY'] = 'hard to guess string'
-# app.config['SQLALCHEMY_DATABASE_URI'] =\
-#     'sqlite3:///' + os.path.join(basedir, 'data.db')
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# #
-# bootstrap = Bootstrap(app)
-# moment = Moment(app)
-# # engine = create_engine(app)
-# db = SQLAlchemy(app)
-# migrate = Migrate(app, db)
-# # con = sqlite3.connect('data.db')
-# # c = con.cursor()
-# login = LoginManager(app)
-# login.login_view = 'login'
+
 
 @app.shell_context_processor
 def make_shell_context():

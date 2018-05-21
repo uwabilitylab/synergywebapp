@@ -89,6 +89,19 @@ th, td {
   z-index: 1;
 }
 
+.uw-thinstrip a.uw-patch:hover,
+.uw-thinstrip a.uw-patch:focus {
+  display: block;
+  text-indent: -9999px;
+  width: 163px;
+  height: 110px;
+  background: url('uw-sprite.svg') no-repeat 0 0 transparent;
+  position: absolute;
+  top: -22px;
+  left: 0;
+  z-index: 1;
+}
+
 .uw-thinstrip .uw-wordmark {
   display: block;
   position: absolute;
@@ -132,11 +145,12 @@ th, td {
   content: "";
   background: url('uw-sprite.svg') no-repeat -696px 0;
 }
-.uw-thinstrip ul.uw-thin-links li a:hover,
+.uw-thinstrip .uw-patch a:hover,
 .uw-thinstrip button:hover,
-.uw-thinstrip ul.uw-thin-links li a:focus,
+.uw-thinstrip .uw-patch a:focus,
 .uw-thinstrip button:focus {
   color: #b7a57a;
+  background-color: #008CBA;
 }
 
 .site-brand.home .slider-header {

@@ -68,27 +68,33 @@ while True:
                 update_query_pro = update(Job).where(Job.job_hash == selected_job[4]).values(status='processing')
                 processing = conn.execute(update_query_pro)
 
-                # Processing file
-                xdata, ydata, aRATE, yfilt, yfiltarray, results, columnNames = readFlaskExcel(excel, selected_job[1], selected_job[2])
-
-                # Force a garbage collection
-                gc.collect()
-
-                # list1 = [4,6,8,9,10,11,12,13]
                 mi = open('app/static/%s.txt' %(selected_job[4]),'r')
                 muin = []
                 for line in mi:
                     line = ast.literal_eval(line)
                     muin = [int(i) for i in line]
+
+                # Processing file
+                print("before load file")
+                xdata, ydata, aRATE, yfilt, yfiltarray, results, columnNames = readFlaskExcel(excel, muin, selected_job[1], selected_job[2])
+                print("after load file")
+
+                # Force a garbage collection
+                gc.collect()
+
+                # list1 = [4,6,8,9,10,11,12,13]
+
                 # Calculating Synergies
-                WW, tVAF, HH, vaf = calculate_Synergies([yfiltarray[i] for i in muin], selected_job[3])
+                # WW, tVAF, HH, vaf = calculate_Synergies([yfiltarray[i] for i in muin], selected_job[3])
+                WW, tVAF, HH, vaf = calculate_Synergies(yfiltarray, selected_job[3])
 
                 # VV = [yfiltarray[i] for i in list1]
                 # vaf = vaf(VV, WW, HH)
 
                 # Getting variables in proper form for templates
-                muscleNames = [columnNames[i] for i in range(len(yfiltarray))]
-                muscleNamesShort = [columnNames[muin[i]][0:10] for i in range(len(muin))]
+                # muscleNames = [columnNames[i] for i in range(len(yfiltarray))]
+                muscleNames = columnNames
+                # muscleNamesShort = [columnNames[muin[i]][0:10] for i in range(len(muin))]
                 # tVAFlabels = ["1 Synergy","2 Synergies","3 Synergies","4 Synergies","5 Synergies"]
                 # labels = ["5","7","9","10","11","12","13","14"]
                 # resultsJson = json.dumps(results)
@@ -101,7 +107,7 @@ while True:
                 pp = PdfPages('app/static/plots/matplots_%s.pdf' %(selected_job[4]))
                 plotEMG(xdata, ydata, yfilt, selected_job[4], muscleNames, pp)
                 plotTVAF(tVAF, selected_job[4], pp)
-                plotWeights(WW, selected_job[4], muscleNamesShort, pp)
+                plotWeights(WW, selected_job[4], muscleNames, pp)
                 plotAct(xdata, HH, selected_job[4], pp)
                 pp.close()
 

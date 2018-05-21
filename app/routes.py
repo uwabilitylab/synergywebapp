@@ -13,6 +13,7 @@ import json
 import pickle
 import string
 import random
+import re
 
 @app.route("/", methods=['GET'])
 def frontPage():
@@ -106,11 +107,20 @@ def doimport():
 
     if request.method == 'POST':
 
+        muscle_id_re = r"muscle\[(\d+)\]";
 
         excel = request.files['file']
-        include = request.values.getlist('includeAll');
+        muscles = request.form.to_dict();
+        includedMuscles = []
+        for muscle_name,value in muscles.items():
+            if value != "":
+                # extract the column index from the muscle field name
+                muscle_matches = re.match(muscle_id_re, muscle_name);
+                if muscle_matches is not None:
+                    includedMuscles.append(int(muscle_matches[1]))
+
         # include = request.values.get
-        print(include)
+        print(includedMuscles)
 
         excel.save(os.path.join(app.config['UPLOAD_FOLDER'], excel.filename))
         size = os.stat(os.path.join(app.config['UPLOAD_FOLDER'], excel.filename)).st_size
@@ -126,7 +136,7 @@ def doimport():
         except:
             pass
 
-        return redirect(url_for('parameterSelection',name=f.file_user_hash,muscles=include))
+        return redirect(url_for('parameterSelection',name=f.file_user_hash,muscles=includedMuscles))
 
     return render_template('fileUpload.html')
 

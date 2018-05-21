@@ -62,7 +62,7 @@ function _getElement(tagName, attributes) {
 function FilePreview(fileInput, previewContainer) {
   this.fileInput = fileInput;
   this.previewContainer = previewContainer;
-
+  this.filterColumns = [];
   this.resetState();
 }
 FilePreview.prototype.resetState = function() {
@@ -80,13 +80,64 @@ FilePreview.prototype.createPreview = function(headerLineIndex, previewLineCount
     this.previewContainer.removeChild(this.previewContainer.firstChild);
   }
   var previewTableEl = _createElement('table', {'class': 'file_preview', 'id': 'table_file_preview'});
-
+  var array = ["", "Other"];
+  var text  =["Don't Include", "Other"];
+  var lowarray = ["Add_Mag", "Gas_Med", "Glu_Max", "Glu_Med", "Lat_Ham", "Med_Ham", "Pre_Bre", "Rec_Fem", "Soleus", "Ten_Fas_Lat", "Tib_Ant", "Vas_Lat"];
+  var lowtext = ["Adductor Magnus",  "Gastrocnemius Medialis", "Gluteus Maximus", "Gluteus Medius", "Lateral Hamstring", "Medial Hamstring", "Peroneus Brevis", "Rectus Femoris", "Soleus", "Tensor Fasciae Latae", "Tibialis Anterior", "Vastus Lateralis"];
+  var trunkarray = ["Ere_Spi", "Ext_Obl", "Lat_Dor", "Rec_Abd", "Spleni", "Trap_Inf", "Tra_Sup"];
+  var trunktext = ["Erector Spinae", "External Obliques", "Latissimus Dorsi", "Rectus Abdmoninus", "Splenius", "Trapizius Inferior", "Trapizius Superior"];
+  var higharray =["Ant_Del", "Bic_Bra", "Pos_Del", "Tri_Bra"];
+  var hightext= ["Anterior Deltoid", "Biceps Brachii", "Posterior Deltoid", "Triceps Brachii"];
+  var selectList = document.createElement('select');
+  var option = document.createElement("option");
+  option.value = array[0];
+  option.text = text[0];
+  selectList.appendChild(option);
+  var lowoptgroup = document.createElement('optgroup');
+  lowoptgroup.label = 'Lower Limb Muscles';
+  // selectList.appendChild(lowoptgroup);
+  for (var j = 0; j < lowarray.length; j++) {
+      var option = document.createElement("option");
+      option.value = lowarray[j];
+      option.text = lowtext[j];
+      lowoptgroup.appendChild(option);
+  }
+  selectList.appendChild(lowoptgroup);
+  var trunkoptgroup = document.createElement('optgroup');
+  trunkoptgroup.label = 'Trunk Muscles';
+  // selectList.appendChild(lowoptgroup);
+  for (var j = 0; j < trunkarray.length; j++) {
+      var option = document.createElement("option");
+      option.value = trunkarray[j];
+      option.text = trunktext[j];
+      trunkoptgroup.appendChild(option);
+  }
+  selectList.appendChild(trunkoptgroup);
+  var highoptgroup = document.createElement('optgroup');
+  highoptgroup.label = 'Upper Limb Muscles';
+  // selectList.appendChild(lowoptgroup);
+  for (var j = 0; j < higharray.length; j++) {
+      var option = document.createElement("option");
+      option.value = higharray[j];
+      option.text = hightext[j];
+      highoptgroup.appendChild(option);
+  }
+  selectList.appendChild(highoptgroup);
+  var option = document.createElement("option");
+  option.value = array[1];
+  option.text = text[1];
+  selectList.appendChild(option);
   //create the column definitions
   var fileTableHeading = _createElement('thead');
   var headerCols = this.previewData[headerLineIndex], headerEl = _createElement('tr'), headerColEl, self = this;
-  for(var i=0;i<headerCols.length;i++) {
+
+  //for(var i=0;i<headerCols.length;i++) {
+  for(var i=0;i<this.filterColumns.length;i++) {
     headerColEl = _createElement('th', null, headerCols[i]);
     headerEl.appendChild(headerColEl);
+    var columnSelect = selectList.cloneNode(true);
+    columnSelect.setAttribute('name', 'muscle[' + this.filterColumns[i].index + ']');
+    headerColEl.appendChild(columnSelect);
   }
   this.headerEl = headerEl;
 
@@ -103,47 +154,6 @@ FilePreview.prototype.createPreview = function(headerLineIndex, previewLineCount
     }
     fileTableBody.appendChild(dataRowEl);
   }
-  var includeRowEl = _createElement('tr');
-  var includeColEl;
-  for(var i=0;i<dataCols.length;i++) {
-    includeColEl = document.createElement('td');
-    var tableLabel = _createElement('label', {'class': 'radio'});
-    var but = _createElement('input', {'type': 'checkbox', 'id':String(i), 'name':'includeAll', 'value':String(i)});
-    var lab = _createElement('label', {'for':'include'});
-    lab.innerHTML = 'Include';
-    // but.id = i;
-    // but.type = "radio";
-    // but.name = "include";
-    // but.value = "Muscle" + i+1;
-    // but.label = "Include";
-    // but.innerHTML = 'Include';
-    // tableLabel.appendChild(but);
-    // tableLabel.appendChild(lab);
-    includeColEl.appendChild(but);
-    includeColEl.appendChild(lab);
-    includeRowEl.appendChild(includeColEl);
-  }
-  fileTableBody.appendChild(includeRowEl);
-  var muscleRowEl = _createElement('tr');
-  var muscleColEl;
-  var array = ["", "Ext_Obl", "Rec_Abd", "Add_Mag", "Ten_Fas_Lat", "Glu_Med", "Glu_Max", "Vas_Lat", "Rec_Fem", "Med_Ham", "Lat_Ham", "Gas_Med", "Soleus", "Tib_Ant", "Pre_Bre", "Ere_Spi"];
-  var text = ["Select a muscle", "External Obliques", "Rectus Abdmoninus", "Adductor Magnus", "Tensor Fasciae Latae", "Gluteus Medius", "Glueteus Maximus", "Vastus Lateralis", "Rectus Femoris", "Medial Hamstring", "Lateral Hamstring", "Gastrocnemius Medialis", "Soleus", "Tibialis Anterior", "Peroneus Brevis", "Erector Spinae"];
-  for(var i=0;i<dataCols.length;i++) {
-    muscleColEl = document.createElement('td');
-    var selectList = document.createElement('select');
-    selectList.id = "mySelect";
-
-    for (var j = 0; j < array.length; j++) {
-        var option = document.createElement("option");
-        option.value = array[j];
-        option.text = text[j];
-        selectList.appendChild(option);
-    }
-    muscleColEl.appendChild(selectList);
-    muscleRowEl.appendChild(muscleColEl);
-  }
-  fileTableBody.appendChild(muscleRowEl);
-
   previewTableEl.appendChild(fileTableHeading);
   previewTableEl.appendChild(fileTableBody);
   this.previewContainer.appendChild(previewTableEl);
@@ -175,6 +185,11 @@ FilePreview.prototype.readFile = function(headerLineIndex, previewLineCount) {
             EMGcols[k] = j;
             console.log(filteredLine[j]);
             fileLines[i][k] = filteredLine[j];
+            self.filterColumns.push({
+              index: j,
+              emgIndex: k,
+              muscle: null
+            });
             k++;
           }
         }
