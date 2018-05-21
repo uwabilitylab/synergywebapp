@@ -75,9 +75,8 @@ while True:
                     muin = [int(i) for i in line]
 
                 # Processing file
-                print("before load file")
                 xdata, ydata, aRATE, yfilt, yfiltarray, results, columnNames = readFlaskExcel(excel, muin, selected_job[1], selected_job[2])
-                print("after load file")
+        
 
                 # Force a garbage collection
                 gc.collect()
