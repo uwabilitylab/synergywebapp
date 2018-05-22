@@ -229,8 +229,13 @@ def result(name):
 
     j = 1
     l = 0
+
+    # to select number of synergies
+    q = Job.query.filter_by(job_hash = name).first()
+    syn_num = q.synergy_number
+
     awnwn = []
-    for k in range(5):
+    for k in range(syn_num):
         awnone = []
         for i in range(j):
             awnone.append(awn[l])
