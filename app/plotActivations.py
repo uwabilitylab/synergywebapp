@@ -17,7 +17,7 @@ def plotAct(xdata, HH, jobfile, pp):
     k=1
     for i in range(len(HH)):
         for j in range(len(HH[i])):
-            fig = plt.figure(100*(k), figsize=(16,6))
+            fig = plt.figure(figsize=(16,6))
 
             filename = 'app/static/plots/Act_Plots_%s/' %(jobfile) + jobfile + 'Act_%s' %(k) + '.png'
             filenames.write('/static/plots/Act_Plots_%s/' %(jobfile) + jobfile + 'Act_%s' %(k) + '.png' + '\n')

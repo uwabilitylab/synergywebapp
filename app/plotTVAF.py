@@ -20,7 +20,7 @@ def plotTVAF(tVAF, jobfile, pp):
     EdgeColors = [[colors.to_rgba('#4b2e83', alpha=1)]]
 
 
-    fig = plt.figure(1, figsize=(16,6))
+    fig = plt.figure(figsize=(16,6))
 
     filename = 'app/static/plots/tVAF_Plots_%s/' %(jobfile) + jobfile + 'tVAF' + '.png'
     filenames.write('/static/plots/tVAF_Plots_%s/' %(jobfile) + jobfile + 'tVAF' + '.png' + '\n')

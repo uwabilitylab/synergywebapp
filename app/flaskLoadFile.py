@@ -11,6 +11,8 @@ def readFlaskExcel(excelfile, included_mus, lowpass, highpass):
     # print(excelfile)
     # filenameEF = excelfile.filename
 
+    print("readFlaskExcel filtering" + str(lowpass) + " " + str(highpass))
+
     if excelfile.endswith(".csv"):
     # if filenameEF.endswith(".csv"):
         loadedfile = pd.read_csv(excelfile)
@@ -46,7 +48,8 @@ def readFlaskExcel(excelfile, included_mus, lowpass, highpass):
             aRATE['aRATE %s' %(j)] = int(round(1/((loadedfile[column[i-1]][len(loadedfile[column[i-1]])-1]-loadedfile[column[i-1]][0])/len(loadedfile[column[i-1]]))))
             rawEMG, pEMG = step02_processEMG(ydata['EMG %s' %(j)], aRATE['aRATE %s' %(j)], int(highpass), 4, int(lowpass)  , 4, 'EMG %s' %(j))
             yfilt['EMGFilt %s' %(j)] = pEMG
-            ydata['EMG %s' %(j)] = np.array(rawEMG[:,0].tolist(), dtype=np.float64)
+            # ydata['EMG %s' %(j)] = np.array(rawEMG[:,0].tolist(), dtype=np.float64)
+            ydata['EMG %s' %(j)] = np.array(rawEMG.tolist(), dtype=np.float64)
             yfiltarray.append(pEMG)
             columnNames.append(column[i])
 

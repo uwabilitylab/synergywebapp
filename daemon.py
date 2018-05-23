@@ -28,6 +28,7 @@ import csv
 import gc
 import os
 import ast
+import traceback
 
 plt.style.use('synergywebapp')
 
@@ -76,7 +77,7 @@ while True:
 
                 # Processing file
                 xdata, ydata, aRATE, yfilt, yfiltarray, results, columnNames = readFlaskExcel(excel, muin, selected_job[1], selected_job[2])
-        
+
 
                 # Force a garbage collection
                 gc.collect()
@@ -190,6 +191,7 @@ while True:
     except Exception as e:
         log_file.write('boo other error')
         print(e)
+        print(traceback.format_exc())
 
         try:
             error_update = update(Job).where(Job.job_file_id == selected_job[0]).values(status='error')

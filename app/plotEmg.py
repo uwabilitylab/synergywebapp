@@ -18,7 +18,7 @@ def plotEMG(xdata, ydata, yfilt, jobfile, muscleNames, pp):
     for i in range(length):
         j = i + 1
 
-        fig = plt.figure(j, figsize=(16,6))
+        fig = plt.figure(figsize=(16,6))
 
         filename = 'app/static/plots/EMG_Plots_%s/' %(jobfile) + jobfile + 'EMG_%s' %(j) + '.png'
         filenames.write('/static/plots/EMG_Plots_%s/' %(jobfile) + jobfile + 'EMG_%s' %(j) + '.png' + '\n')

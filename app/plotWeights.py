@@ -23,7 +23,7 @@ def plotWeights(WW, jobfile, muscleNamesShort, pp):
     k=1
     for i in range(len(WW)):
         for j in range(len(WW[i])):
-            fig = plt.figure(1000*(k), figsize=(16,6))
+            fig = plt.figure(figsize=(16,6))
 
             filename = 'app/static/plots/Wei_Plots_%s/' %(jobfile) + jobfile + 'Wei_%s' %(k) + '.png'
             filenames.write('/static/plots/Wei_Plots_%s/' %(jobfile) + jobfile + 'Wei_%s' %(k) + '.png' + '\n')
