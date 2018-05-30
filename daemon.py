@@ -54,7 +54,7 @@ while True:
         with engine.connect() as conn:
 
             # Unprocessed Job selection
-            job_query = select([Job.job_file_id, Job.lowpass_cutoff, Job.highpass_cutoff, Job.synergy_number, Job.job_hash]).where(Job.status == 'submitted')
+            job_query = select([Job.job_file_id, Job.lowpass_cutoff, Job.highpass_cutoff, Job.synergy_number, Job.job_hash, Job.included_muscles, Job.matched_names]).where(Job.status == 'submitted')
             selected_job = conn.execute(job_query).first()
 
             if selected_job is not None:
@@ -69,14 +69,21 @@ while True:
                 update_query_pro = update(Job).where(Job.job_hash == selected_job[4]).values(status='processing')
                 processing = conn.execute(update_query_pro)
 
-                mi = open('app/static/%s.txt' %(selected_job[4]),'r')
-                muin = []
-                for line in mi:
-                    line = ast.literal_eval(line)
-                    muin = [int(i) for i in line]
+                musclesIncluded = json.loads(selected_job[5])
+                musclesIncluded = ast.literal_eval(musclesIncluded)
+                namesIncluded = json.loads(selected_job[6])
+                namesIncluded = ast.literal_eval(namesIncluded)
+                # print(musclesIncluded)
+                # print(musclesIncluded)
 
+                # mi = open('app/static/%s.txt' %(selected_job[4]),'r')
+                # muin = []
+                # for line in mi:
+                #     line = ast.literal_eval(line)
+                #     muin = [int(i) for i in line]
+                #     print(muin)
                 # Processing file
-                xdata, ydata, aRATE, yfilt, yfiltarray, results, columnNames = readFlaskExcel(excel, muin, selected_job[1], selected_job[2])
+                xdata, ydata, aRATE, yfilt, yfiltarray, results, columnNames = readFlaskExcel(excel, musclesIncluded, selected_job[1], selected_job[2])
 
 
                 # Force a garbage collection
@@ -105,9 +112,9 @@ while True:
 
                 # Generating matplotlib figures of EMG
                 pp = PdfPages('app/static/plots/matplots_%s.pdf' %(selected_job[4]))
-                plotEMG(xdata, ydata, yfilt, selected_job[4], muscleNames, pp)
+                plotEMG(xdata, ydata, yfilt, selected_job[4], namesIncluded, pp)
                 plotTVAF(tVAF, selected_job[4], pp)
-                plotWeights(WW, selected_job[4], muscleNames, pp)
+                plotWeights(WW, selected_job[4], namesIncluded, pp)
                 plotAct(xdata, HH, selected_job[4], pp)
                 pp.close()
 
@@ -120,7 +127,7 @@ while True:
                     writer.writerow(["Max Number of Synergies"])
                     writer.writerow([int(selected_job[3])])
                     writer.writerow(["Muscles included"])
-                    writer.writerow(muin)
+                    writer.writerow(musclesIncluded)
                     writer.writerow(['Unfiltered Emg'])
                     for i in range(len(ydata)):
                         writer.writerow(['EMG %s' %(i+1)])

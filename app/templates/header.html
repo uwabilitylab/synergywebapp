@@ -8,6 +8,7 @@
 
 {% block title %}Synergies{% endblock %}
 
+
 {% block navbar %}
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -91,10 +92,17 @@
                         id="486" title="Import File">Import File</a>
                     </li>
 
-                    <li class="dawgdrops-item">
-                        <a href="/logout"
-                        id="486" title="Logout">Logout</a>
-                    </li>
+                    {% if current_user.is_authenticated %}
+                      <li class="dawgdrops-item">
+                          <a href="/logout"
+                          id="486" title="Logout">Logout</a>
+                      </li>
+                    {% else %}
+                      <li class="dawgdrops-item">
+                          <a href="/login"
+                          id="486" title="Login">Login</a>
+                      </li>
+                    {% endif %}
                 </ul>
             </div>
         </nav>
@@ -104,6 +112,19 @@
         <!-- <img src="/static/21390372_10210171564707308_756790771_o.jpg" class="img-fluid" alt="Electromyography"> -->
         <!-- <img src="/static/Neuron-Desktop-Images.jpg" class="img-fluid" alt="Electromyography"> -->
     </div>
+</div>
+<div>
+  <br>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-warning">
+            {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+    {% endwith %}
+  <br>
 </div>
 </body>
 </html>

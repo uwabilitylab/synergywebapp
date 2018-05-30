@@ -63,7 +63,8 @@ class Job(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     job_hash = db.Column(db.String(64))
     job_file_id = db.Column(db.String(64), db.ForeignKey('files.file_user_hash'))
-    # included_muscles = db.Column
+    included_muscles = db.Column(db.String(64))
+    matched_names = db.Column(db.String(128))
     lowpass_cutoff = db.Column(db.Integer)
     highpass_cutoff = db.Column(db.Integer)
     synergy_number = db.Column(db.Integer)

@@ -3,11 +3,13 @@
 {% block content %}
 <div class="container">
   <div class="page-header">
+    <h1>Parameter Selection</h1>
   </div>
   <body>
     <h4>Select file for upload and optionally choose processing parameters</h4>
     <p>Default processing parameters: High pass cutoff 20 hz, Low pass cutoff 10 Hz, and 5 calculated synergies</p>
     <form action="" method=POST enctype=multipart/form-data>
+    <input type="submit" style="display: none"/>
     <a class="uw-btn" onclick="filterParameters()">Advanced</a>
     <div id = 'filter'>
       <h4>Select Parameters</h4>

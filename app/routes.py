@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from decorators import check_confirmed, admin_required
 from werkzeug.urls import url_parse
@@ -7,6 +7,7 @@ from werkzeug.datastructures import FileStorage
 from app.forms import LoginForm, RegistrationForm
 from app.models import User, File, Job
 import pandas as pd
+from math import floor
 import datetime
 import os
 import json
@@ -108,12 +109,15 @@ def doimport():
     if request.method == 'POST':
 
         muscle_id_re = r"muscle\[(\d+)\]";
+        parameterSelection = {'status':0}
 
         excel = request.files['file']
         muscles = request.form.to_dict();
         includedMuscles = []
+        matchedName = []
         for muscle_name,value in muscles.items():
             if value != "":
+                matchedName.append(value)
                 # extract the column index from the muscle field name
                 muscle_matches = re.match(muscle_id_re, muscle_name);
                 if muscle_matches is not None:
@@ -128,37 +132,49 @@ def doimport():
         yes = f.set_file_hash(os.path.join(app.config['UPLOAD_FOLDER'], excel.filename))
         no = f.set_file_user_hash(os.path.join(app.config['UPLOAD_FOLDER'], excel.filename))
         f.set_file_path("/app/csvfiles/%s" % (excel.filename))
+        parameterSelection['name'] = f.file_user_hash
+        parameterSelection['muscles'] = includedMuscles
+        parameterSelection['mnames'] = matchedName
+        # pS = json.dumps(parameterSelection)
+        print("FILE SIZE: " + str(size))
 
         try:
             db.session.add(f)
             db.session.commit()
+            parameterSelection['status'] = 1;
+        except Exception as e:
+            print(str(e))
+            parameterSelection['status'] = 1;
+            ###### Must fix this laterrrrr
 
-        except:
-            pass
 
-        return redirect(url_for('parameterSelection',name=f.file_user_hash,muscles=includedMuscles))
+        # return redirect(url_for('parameterSelection',name=f.file_user_hash,muscles=includedMuscles,mnames=matchedName))
+        return jsonify(parameterSelection)
 
     return render_template('fileUpload.html')
 
 
-@app.route("/parameterSelection/<string:name>/<string:muscles>", methods=['GET', 'POST'])
+@app.route("/parameterSelection/<string:name>/<string:muscles>/<string:mnames>", methods=['GET', 'POST'])
 @login_required
 @check_confirmed
-def parameterSelection(name, muscles):
+def parameterSelection(name, muscles, mnames):
     user = current_user.username
-    print(muscles)
 
     if request.method == 'POST':
         low = request.form['low']
         high = request.form['high']
         numSyn = request.form['syn']
         address = request.remote_addr
+        matchedNames = json.dumps(mnames)
+        musclesIncluded = json.dumps(muscles)
+        print(matchedNames)
+        print(musclesIncluded)
         timeDigest= datetime.datetime.now(tz=None)
         timeFormat = timeDigest.strftime("%Y-%m-%d %H:%M:%S.%f")
-        j = Job(job_file_id=name, lowpass_cutoff=low, highpass_cutoff=high, synergy_number=numSyn, status='submitted', processed_file_path=app.config['UPLOAD_FOLDER'], ip_address=address, time_submitted=timeDigest)
+        j = Job(job_file_id=name, included_muscles=musclesIncluded, matched_names=matchedNames, lowpass_cutoff=low, highpass_cutoff=high, synergy_number=numSyn, status='submitted', processed_file_path=app.config['UPLOAD_FOLDER'], ip_address=address, time_submitted=timeDigest)
         jh = j.set_job_hash(''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(50)))
-        musnames = open(os.path.join(app.config['BASE_FOLDER'] + '/app/static/', '%s.txt' %(jh)), 'w+')
-        musnames.write('%s' %(muscles))
+        # musnames = open(os.path.join(app.config['BASE_FOLDER'] + '/app/static/', '%s.txt' %(jh)), 'w+')
+        # musnames.write('%s' %(muscles))
         db.session.add(j)
         db.session.commit()
 
@@ -175,13 +191,17 @@ def status(name):
     q = Job.query.filter_by(job_hash = name).first()
     fileStatus = q.status
 
-    if request.method == 'POST' and fileStatus == 'processed':
+    if request.method == 'POST':
 
         return redirect(url_for('results', name=name))
 
-    elif request.method == 'POST':
-
-        return render_template('status.html',fileStatus=fileStatus)
+    # if request.method == 'POST' and fileStatus == 'processed':
+    #
+    #     return redirect(url_for('results', name=name))
+    #
+    # elif request.method == 'POST':
+    #
+    #     return render_template('status.html',fileStatus=fileStatus)
 
     return render_template('status.html',fileStatus=fileStatus)
 
@@ -199,7 +219,8 @@ def result(name):
     with open('pklfiles/%s.pkl' %(name), 'rb') as f:  # Python 3: open(..., 'rb')
         [tVAF, vaf] = pickle.load(f)
 
-    tVAF = [round(elem, 2) for elem in tVAF]
+    # tVAF = [round(elem, 2) for elem in tVAF]
+    tVAF = [floor(elem*100)/100 for elem in tVAF]
 
     # vaf = [round(elem, 2) for elem in vaf]
 

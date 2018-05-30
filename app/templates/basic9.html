@@ -46,9 +46,13 @@
         </div>
         <script>
         function displayEMG() {
+          var tvafimages = document.getElementById('tVAFs');
+          var Actimages = document.getElementById('act');
           var EMGimages = document.getElementById('charts');
           if (EMGimages.style.display == "none") {
             EMGimages.style.display = "block";
+            tvafimages.style.display = "none";
+            Actimages.style.display = "none";
           } else {
             EMGimages.style.display = "none";
           }
@@ -78,16 +82,24 @@
         }
         function displaytVAF() {
           var tvafimages = document.getElementById('tVAFs');
+          var Actimages = document.getElementById('act');
+          var EMGimages = document.getElementById('charts');
           if (tvafimages.style.display == "none") {
             tvafimages.style.display = "block";
+            Actimages.style.display = "none";
+            EMGimages.style.display = "none";
           } else {
             tvafimages.style.display = "none";
           }
         }
         function displayAct() {
+          var tvafimages = document.getElementById('tVAFs');
           var Actimages = document.getElementById('act');
+          var EMGimages = document.getElementById('charts');
           if (Actimages.style.display == "none") {
             Actimages.style.display = "block";
+            tvafimages.style.display = "none";
+            EMGimages.style.display = "none";
           } else {
             Actimages.style.display = "none";
           }

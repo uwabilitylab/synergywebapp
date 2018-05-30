@@ -32,7 +32,10 @@
   <body>
 
     <form id="fileform" method=POST enctype="multipart/form-data" autocomplete="off">
-     <input type="file" name="file" id="fileuploadel" required="required" />
+     <input type="file" name="file" id="fileuploadel" required="required"/><br>
+     <progress id="progressBar" value="0" max="100" style="width:300px;"></progress>
+     <h3 id="status"></h3>
+     <p id="loaded_n_total"></p>
      <div id="file_preview" style="overflow-x: scroll;"></div>
 
      <!-- SELECT element you can clone and add to the EMG columns -->
@@ -41,7 +44,10 @@
       <option value="gastroc">Gastrocnemius</option>
       <option value="bicep">Bicep</option>
      </select>-->
-     <a class="uw-btn" href="#" onclick="$(this).closest('form').submit()">Upload</a>
+     <label><input type="checkbox" required name="checkbox" value="check" id="agree"/> I certify that this file contains no patient identifiers and can be stored on the Ability Lab's Servers</label>
+     <p>
+     <a class="uw-btn" href="#" onclick="$(this).closest('form').submit();return false;">Upload</a>
+     <input type="submit" style="display: inline" />
     </form>
 
     <script type="text/javascript">
@@ -49,6 +55,7 @@
     //called when page finishes loading
     var filePreview;
     window.addEventListener('DOMContentLoaded', function(e) {
+      document.getElementById('fileform').addEventListener('submit', uploadFile);
     	//get a handle on the file input, as well as the element we're going to put the preview in
     	var fileInput = document.getElementById('fileuploadel'),
     	filePreviewEl = document.getElementById('file_preview');
@@ -59,7 +66,7 @@
     	filePreview = new FilePreview(fileInput, filePreviewEl);
     });
 
-    var table = document.getElementById("table_file_preview");
+    /*var table = document.getElementById("table_file_preview");
 
     var tr = document.createElement("tr");
     var td = document.createElement("td");
@@ -67,7 +74,7 @@
 
     td.appendChild(document.getElementById("muscles"));
     tr.appendChild(td);
-    table.appendChild(tr);
+    table.appendChild(tr);*/
     </script>
   </body>
 </div>

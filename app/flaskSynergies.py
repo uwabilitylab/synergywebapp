@@ -4,6 +4,7 @@ import time
 import itertools
 import multiprocessing
 import numpy as np
+from math import floor
 #from vaf import vaf
 #from multiprocessing import Pool, freeze_support
 
@@ -21,7 +22,8 @@ def calculate_vaf(VV,WW,HH):
     err_sub = VV - np.dot(np.transpose(WW),HH)
     vaf = 1-sum(sum(np.square(err_sub)))/sum(sum(np.square(VV)))
 
-    return round(vaf,2)
+    # return round(vaf,2)
+    return floor(vaf*100)/100
 
 def calculate_Synergies(emg, numSyn):
 

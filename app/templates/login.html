@@ -26,6 +26,7 @@
       </p>
       <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
       <a class="uw-btn" href="#" onclick="$(this).closest('form').submit()">Login<a/>
+      <input type="submit" style="display: none" />
   </form>
   <p><a href="{{ url_for('register') }}">New User? Click to Register!</a></p>
 </div>
