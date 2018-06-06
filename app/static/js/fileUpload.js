@@ -80,15 +80,7 @@ FilePreview.prototype.createPreview = function(headerLineIndex, previewLineCount
     this.previewContainer.removeChild(this.previewContainer.firstChild);
   }
   var previewTableEl = _createElement('table', {'class': 'file_preview', 'id': 'table_file_preview'});
-  var array = ["", "Other"];
-  var text  =["Don't Include", "Other"];
-  var lowarray = ["Add_Mag", "Gas_Med", "Glu_Max", "Glu_Med", "Lat_Ham", "Med_Ham", "Pre_Bre", "Rec_Fem", "Soleus", "Ten_Fas_Lat", "Tib_Ant", "Vas_Med", "Vas_Lat"];
-  var lowtext = ["Adductor Magnus",  "Gastrocnemius Medialis", "Gluteus Maximus", "Gluteus Medius", "Lateral Hamstring", "Medial Hamstring", "Peroneus Brevis", "Rectus Femoris", "Soleus", "Tensor Fasciae Latae", "Tibialis Anterior", "Vastus Medialis", "Vastus Lateralis"];
-  var trunkarray = ["Ere_Spi", "Ext_Obl", "Lat_Dor", "Rec_Abd", "Spleni", "Trap_Inf", "Tra_Sup"];
-  var trunktext = ["Erector Spinae", "External Obliques", "Latissimus Dorsi", "Rectus Abdmoninus", "Splenius", "Trapizius Inferior", "Trapizius Superior"];
-  var higharray =["Ant_Del", "Bic_Bra", "Pos_Del", "Tri_Bra"];
-  var hightext= ["Anterior Deltoid", "Biceps Brachii", "Posterior Deltoid", "Triceps Brachii"];
-  var selectList = document.createElement('select');
+  var selectList = document.createElement("select");
   var option = document.createElement("option");
   option.value = array[0];
   option.text = text[0];
@@ -241,6 +233,7 @@ function uploadFile(event) {
   ajax.open("POST", "/doimport"); // http://www.developphp.com/video/JavaScript/File-Upload-Progress-Bar-Meter-Tutorial-Ajax-PHP
   //use file_upload_parser.php from above url
   ajax.send(formdata);
+  document.getElementById('progressBar').hidden = false;
 }
 
 function progressHandler(event) {
@@ -251,10 +244,11 @@ function progressHandler(event) {
 }
 
 function completeHandler(event) {
-  _("status").innerHTML = event.target.responseText;
-  var parameters = JSON.parse(event.target.responseText);
-  if (parameters.status == 1) {
-    document.location.href = '/parameterSelection/' + encodeURIComponent(parameters.name) + '/' + encodeURIComponent(JSON.stringify(parameters.muscles)) + '/' + encodeURIComponent(JSON.stringify(parameters.mnames));
+  var parameterSelection = JSON.parse(event.target.responseText);
+  if (parameterSelection.status == 1) {
+    document.location.href ='/parameterSelection/' + encodeURIComponent(parameterSelection.name) + '/' + encodeURIComponent(JSON.stringify(parameterSelection.muscles)) + '/' + encodeURIComponent(JSON.stringify(parameterSelection.mnames));
+  } else {
+    alert(parameterSelection.message)
   }
 }
 

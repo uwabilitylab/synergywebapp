@@ -32,8 +32,8 @@
   <body>
 
     <form id="fileform" method=POST enctype="multipart/form-data" autocomplete="off">
-     <input type="file" name="file" id="fileuploadel" required="required"/><br>
-     <progress id="progressBar" value="0" max="100" style="width:300px;"></progress>
+     <input type="file" name="file" id="fileuploadel" required="required" accept=".csv, .tsv"/><br>
+     <progress id="progressBar" value="0" max="100" style="width:300px;" hidden="true"></progress>
      <h3 id="status"></h3>
      <p id="loaded_n_total"></p>
      <div id="file_preview" style="overflow-x: scroll;"></div>
@@ -51,6 +51,14 @@
     </form>
 
     <script type="text/javascript">
+    var array = {{array|tojson|safe}};
+    var text  = {{text|tojson|safe}};
+    var lowarray = {{lowarray|tojson|safe}};
+    var lowtext = {{lowtext|tojson|safe}};
+    var trunkarray = {{trunkarray|tojson|safe}};
+    var trunktext = {{trunktext|tojson|safe}};
+    var higharray = {{higharray|tojson|safe}};
+    var hightext= {{hightext|tojson|safe}};
 
     //called when page finishes loading
     var filePreview;

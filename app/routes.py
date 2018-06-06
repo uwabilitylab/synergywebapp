@@ -2,6 +2,7 @@ from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from decorators import check_confirmed, admin_required
 from werkzeug.urls import url_parse
+from werkzeug.utils import secure_filename
 from app import app, db
 from werkzeug.datastructures import FileStorage
 from app.forms import LoginForm, RegistrationForm
@@ -15,6 +16,21 @@ import pickle
 import string
 import random
 import re
+import urllib
+import csv
+
+
+#define muscles here
+otherarray = ["", "Other"];
+othertext =["Don't Include", "Other"];
+lowarray = ["Add_Mag", "Gas_Med", "Glu_Max", "Glu_Med", "Lat_Ham", "Med_Ham", "Pre_Bre", "Rec_Fem", "Soleus", "Ten_Fas_Lat", "Tib_Ant", "Vas_Med", "Vas_Lat"];
+lowtext = ["Adductor Magnus",  "Gastrocnemius Medialis", "Gluteus Maximus", "Gluteus Medius", "Lateral Hamstring", "Medial Hamstring", "Peroneus Brevis", "Rectus Femoris", "Soleus", "Tensor Fasciae Latae", "Tibialis Anterior", "Vastus Medialis", "Vastus Lateralis"];
+trunkarray = ["Ere_Spi", "Ext_Obl", "Lat_Dor", "Rec_Abd", "Spleni", "Trap_Inf", "Tra_Sup"];
+trunktext = ["Erector Spinae", "External Obliques", "Latissimus Dorsi", "Rectus Abdmoninus", "Splenius", "Trapizius Inferior", "Trapizius Superior"];
+higharray =["Ant_Del", "Bic_Bra", "Pos_Del", "Tri_Bra"];
+hightext= ["Anterior Deltoid", "Biceps Brachii", "Posterior Deltoid", "Triceps Brachii"];
+
+all_muscles = lowarray + trunkarray + higharray
 
 @app.route("/", methods=['GET'])
 def frontPage():
@@ -106,52 +122,84 @@ def doimport():
 
     user = current_user.username
 
+
+
     if request.method == 'POST':
+
 
         muscle_id_re = r"muscle\[(\d+)\]";
         parameterSelection = {'status':0}
-
-        excel = request.files['file']
-        muscles = request.form.to_dict();
-        includedMuscles = []
-        matchedName = []
-        for muscle_name,value in muscles.items():
-            if value != "":
-                matchedName.append(value)
-                # extract the column index from the muscle field name
-                muscle_matches = re.match(muscle_id_re, muscle_name);
-                if muscle_matches is not None:
-                    includedMuscles.append(int(muscle_matches[1]))
-
-        # include = request.values.get
-        print(includedMuscles)
-
-        excel.save(os.path.join(app.config['UPLOAD_FOLDER'], excel.filename))
-        size = os.stat(os.path.join(app.config['UPLOAD_FOLDER'], excel.filename)).st_size
-        f = File(file_user_id=current_user.id, file_size=str(size/1000) + "KB")
-        yes = f.set_file_hash(os.path.join(app.config['UPLOAD_FOLDER'], excel.filename))
-        no = f.set_file_user_hash(os.path.join(app.config['UPLOAD_FOLDER'], excel.filename))
-        f.set_file_path("/app/csvfiles/%s" % (excel.filename))
-        parameterSelection['name'] = f.file_user_hash
-        parameterSelection['muscles'] = includedMuscles
-        parameterSelection['mnames'] = matchedName
-        # pS = json.dumps(parameterSelection)
-        print("FILE SIZE: " + str(size))
+        parameterSelection['message'] = ''
 
         try:
+            excel = request.files['file']
+
+            #input validation
+            muscles = request.form.to_dict();
+            includedMuscles = []
+            matchedName = []
+            for muscle_name,value in muscles.items():
+                if value != "":
+                    # extract the column index from the muscle field name
+                    muscle_matches = re.match(muscle_id_re, muscle_name);
+                    if muscle_matches is not None:
+                        matchedName.append(value)
+                        includedMuscles.append(int(muscle_matches[1]))
+
+            # include = request.values.get
+            print("muscles: " + str(includedMuscles))
+            #includedMuscles validity is checked in daemon.py
+
+            #check the file extension is allowed
+            escaped_filename = secure_filename(excel.filename)
+            if not (escaped_filename.endswith(".csv") or escaped_filename.endswith(".tsv")):
+                raise ValueError("Please upload only csv and tsv files")
+
+            #check that the file is actually csv or tsv
+            print(excel.read(1024))
+            dialect = csv.Sniffer().sniff(str(excel.read(65536),'utf-8')) #need to read in enough bytes to include a couple of lines
+            print(str(dialect))
+            # double-check the sniffed delimiter is allowed
+            allowed_delimiters = [',', '\t']
+
+            if dialect.delimiter not in allowed_delimiters:
+                print(str(dialect.deliminiter))
+                raise TypeError("Invalid file: must be comma or tab-delimited text!")
+
+
+            excel.save(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename))
+            size = os.stat(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename)).st_size
+            f = File(file_user_id=current_user.id, file_size=str(size/1000) + "KB")
+            yes = f.set_file_hash(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename))
+            no = f.set_file_user_hash(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename))
+            f.set_file_path("/app/csvfiles/%s" % (escaped_filename))
+            parameterSelection['name'] = f.file_user_hash
+            parameterSelection['muscles'] = includedMuscles
+            parameterSelection['mnames'] = matchedName
+            # pS = json.dumps(parameterSelection)
+            print("FILE SIZE: " + str(size))
+
+
             db.session.add(f)
             db.session.commit()
             parameterSelection['status'] = 1;
+        except ValueError as e:
+            parameterSelection['status'] = 2;
+            parameterSelection['message'] = str(e)
+        except (UnicodeDecodeError, TypeError) as e:
+            parameterSelection['status'] = 2;
+            parameterSelection['message'] = "Invalid file: must be comma or tab-delimited text!"
         except Exception as e:
             print(str(e))
-            parameterSelection['status'] = 1;
+            parameterSelection['message'] = "An unknown error occurred, please contact support"
+            parameterSelection['status'] = 3;
             ###### Must fix this laterrrrr
 
 
         # return redirect(url_for('parameterSelection',name=f.file_user_hash,muscles=includedMuscles,mnames=matchedName))
         return jsonify(parameterSelection)
 
-    return render_template('fileUpload.html')
+    return render_template('fileUpload.html', array=otherarray, text=othertext,lowarray=lowarray, lowtext=lowtext,trunkarray=trunkarray,trunktext=trunktext,higharray=higharray,hightext=hightext)
 
 
 @app.route("/parameterSelection/<string:name>/<string:muscles>/<string:mnames>", methods=['GET', 'POST'])
@@ -161,17 +209,25 @@ def parameterSelection(name, muscles, mnames):
     user = current_user.username
 
     if request.method == 'POST':
-        low = request.form['low']
-        high = request.form['high']
-        numSyn = request.form['syn']
+        low = int(request.form['low'])
+        high = int(request.form['high'])
+        numSyn = int(request.form['syn'])
         address = request.remote_addr
-        matchedNames = json.dumps(mnames)
-        musclesIncluded = json.dumps(muscles)
+
+        matchedNames = json.loads(urllib.parse.unquote(mnames))
+        musclesIncluded = json.loads(urllib.parse.unquote(muscles))
         print(matchedNames)
         print(musclesIncluded)
+
+        all_muscles_set = set(all_muscles)
+        matchedNames_set = set(matchedNames)
+
+        if (not matchedNames_set.issubset(all_muscles_set)):
+            return(render_template('busted.html'))
+
         timeDigest= datetime.datetime.now(tz=None)
         timeFormat = timeDigest.strftime("%Y-%m-%d %H:%M:%S.%f")
-        j = Job(job_file_id=name, included_muscles=musclesIncluded, matched_names=matchedNames, lowpass_cutoff=low, highpass_cutoff=high, synergy_number=numSyn, status='submitted', processed_file_path=app.config['UPLOAD_FOLDER'], ip_address=address, time_submitted=timeDigest)
+        j = Job(job_file_id=name, included_muscles=json.dumps(musclesIncluded), matched_names=json.dumps(matchedNames), lowpass_cutoff=low, highpass_cutoff=high, synergy_number=numSyn, status='submitted', processed_file_path=app.config['UPLOAD_FOLDER'], ip_address=address, time_submitted=timeDigest)
         jh = j.set_job_hash(''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(50)))
         # musnames = open(os.path.join(app.config['BASE_FOLDER'] + '/app/static/', '%s.txt' %(jh)), 'w+')
         # musnames.write('%s' %(muscles))

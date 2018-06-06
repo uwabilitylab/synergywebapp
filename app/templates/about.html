@@ -1,28 +1,42 @@
 {% extends "header.html" %}
 
 {% block content %}
+<style>
+  div.c {
+    margin-left: 10%;
+    margin-right: 10%;
+  }
+</style>
 <div class="container">
   <div class="page-header">
     <h1>Muscle Synergies</h1>
   </div>
   <body>
-    <h4>Muscle synergies are used to quantify a person's motor control. The more synergies that are needed to accurately represent their motor control, the more complex the motor control. Muscles synergies are used to represent both upper and lower limb motor control.</h4>
-    <h2>Motivation</h3>
-      <h4>Cerebral Palsy and Stroke</h4>
-      <p>Every brain injury with cerebral palsy and stroke is unique. This results in highly individual gait impairments and thus requires patient-specific metrics to quantify motor control. Quantifying motor control analytically is less common in practice, but could lend insight into individualized treaments.</p>
-    <!-- <h3>Motivation</h3>
-    <h4>Cerebral Palsy</h4>
-      <p>Every brain injury is unique</p>
-      <p>Need methods to quantify patient-specific impairments</p>
-    <h4>Muscle Synergies</h4>
-      <p>Theory from neuroscience describing how we coordinate muscles to produce movement</p>
-  <div class="container">
-    <img src="/static/emg.png" class="img-fluid" alt="Electromyography">
-    <img src="/static/weights.png" class="img-fluid" alt="Synergy Weights">
-    <img src="/static/activations.png" class="img-fluid" alt="Synergy Activations">
-    <img src="/static/leg4.png" class="img-fluid" alt="4 Muscle Subset">
-    <img src="/static/leg8.png" class="img-fluid" alt="8 Muscle Subset">
-  </div> -->
+    <h2>Motivation for Understanding Motor Control</h3>
+      <p>Individuals with CP have altered muscle activity during walking compared to their typically-developing peers resulting from a brain injury at or near the time of birth. In 2008, 3.1 children out of every 1000 were found to have CP in the united states at age 8 [1]. Because every brain injury is unique, patient-specific differences in motor control and gait patterns arise for individuals with CP. Motion capture can be used to analyze these the kinematic abnormalities in gait, such as flexion angles of the ankle and knee. However, motion capture does not capture the patient’s motor control.</p>
+      <p>It is hypothesized that by understanding a patient's specific method of motor control, patient-specific treatment protocols might be able to be developed that have the highest possible success for patients.</p>
+    <h2>A Synergy Driven Control Strategy</h2>
+      <p>Muscle synergies are a theory from neuroscience that descibes how muscles are activated together to produce complex movements. A synergy driven control system is advantageous because its limits the number of signals needed to activate muscles during an activity. Instead of individually activating muscles, the synergy is activated.</p>
+    <h2>Muscle Synergy Calculation</h2>
+      <
+      <p>Using electromyography (EMG) gathered during gait over a large range of muscles lower dimensional activation groups can be computed.6 Non-negative matrix factorization algorithms are commonly used to identify these groupings, also known as muscle synergies.  Synergies also contain the weighting of each respective muscle EMG that is included in each synergy.7 Additionally, this synergy calculation produces activations specific to each group of weightings. Reconstructing the original EMG signals is achieved by multiplication of the synergy weights and activations (Figure 1). However, this reconstruction is not completely accurate, especially at lower synergy solutions, because of error in the decomposition.  </p>
+      <h4>Electromyography Processing</h4>
+        <p>For synergy calculation the EMG signals are filtered and processed. First they are high-passed, then rectified, low-passed, and finally normalized. There are multiple parameters used in literature as standards for filtering, however this website integrates in one standard: 20 Hz high pass, 10 hz low pass. Filtering parameters have an effect on the tVAF during synergy calculation and so establishing consistency across synergy calculations is key in order to have comparable results.</p>
+      <h4>Muscle Selection</h4>
+        <p>Different Institutions follow different protocols for the muscles included in synergy analysis. Muscles selection is also dependent on the number of EMG sensors available for use. Additionally, accurate EMG sensor placement requires significant amounts of time, and thus time constraints can limit the number of EMG signals gathered. Patient populations also can determine the number of sensors used; sensors take up more space on a small child than an adult, and so it can be especially difficult places EMG sensors when sensors might overlap or not be fully isolated as they would be on an adult.</p>
+        <p>Standard Lower Limb Muscle Synergy Subsets:</p>
+        <div class ="c">
+          <p>Four Muscle Subset: Medial Gastrocnemius, Tibialis Anterior, Rectus Femoris, Medial Hamstring
+          <p>Five Muscle Subset: Medial Gastrocnemius, Tibialis Anterior, Rectus Femoris, Lateral Hamstring, Medial Hamstring
+          <p>Eight Muscle Subset: Medial Gastrocnemius, Soleus, Tibialis Anterior, Rectus Femoris, Vastus Medius, Lateral Hamstring, Medial Hamstring, Gleuteus Medius
+          <p>Sixteen Muscle Subset: External Obliques, Peronius Longus, Rectus Abdominus, Erector Spinae
+        </div>
+        <p>Standard Upper Limb Muscle Synergy Subsets:</p>
+        <div class ="c">
+          <p></p>
+        </div>
+      <h4>Synergy Calculation</h4>
+
   <div class="uw-slideshow">
    <div class="slide has-text">
      <a title="Motivation" href="#">
