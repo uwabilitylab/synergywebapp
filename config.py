@@ -12,3 +12,4 @@ class Config(object):
     BASE_FOLDER = '/Users/claire_mit/Documents/Steele_Lab/SynergyWebApp'
     UPLOAD_FOLDER = BASE_FOLDER + '/app/csvfiles'
     PLOT_FOLDER = BASE_FOLDER + '/app/static/plots'
+    MAX_CONTENT_LENGTH = 100 * 1024 * 1024

@@ -33,9 +33,6 @@
 
     <form id="fileform" method=POST enctype="multipart/form-data" autocomplete="off">
      <input type="file" name="file" id="fileuploadel" required="required" accept=".csv, .tsv"/><br>
-     <progress id="progressBar" value="0" max="100" style="width:300px;" hidden="true"></progress>
-     <h3 id="status"></h3>
-     <p id="loaded_n_total"></p>
      <div id="file_preview" style="overflow-x: scroll;"></div>
 
      <!-- SELECT element you can clone and add to the EMG columns -->
@@ -45,7 +42,8 @@
       <option value="bicep">Bicep</option>
      </select>-->
      <label><input type="checkbox" required name="checkbox" value="check" id="agree"/> I certify that this file contains no patient identifiers and can be stored on the Ability Lab's Servers</label>
-     <p>
+     <progress id="progressBar" value="0" max="100" style="width:300px;" hidden="true"></progress>
+     <p id="status"></p>
      <a class="uw-btn" href="#" onclick="$(this).closest('form').submit();return false;">Upload</a>
      <input type="submit" style="display: inline" />
     </form>

@@ -237,7 +237,6 @@ function uploadFile(event) {
 }
 
 function progressHandler(event) {
-  _("loaded_n_total").innerHTML = "Uploaded " + event.loaded + " bytes of " + event.total;
   var percent = (event.loaded / event.total) * 100;
   _("progressBar").value = Math.round(percent);
   _("status").innerHTML = Math.round(percent) + "% uploaded... please wait";
@@ -253,7 +252,12 @@ function completeHandler(event) {
 }
 
 function errorHandler(event) {
-  _("status").innerHTML = "Upload Failed";
+  console.log(event.target);
+  if (event.target.status == 413) {
+    alert("File uploaded is too large")
+  } else {
+    _("status").innerHTML = "Upload Failed";
+  }
 }
 
 function abortHandler(event) {

@@ -7,6 +7,7 @@ from app import app, db
 from werkzeug.datastructures import FileStorage
 from app.forms import LoginForm, RegistrationForm
 from app.models import User, File, Job
+from sqlalchemy.sql import select, func
 import pandas as pd
 from math import floor
 import datetime
@@ -18,6 +19,8 @@ import random
 import re
 import urllib
 import csv
+import hashlib
+import traceback
 
 
 #define muscles here
@@ -153,44 +156,100 @@ def doimport():
             #check the file extension is allowed
             escaped_filename = secure_filename(excel.filename)
             if not (escaped_filename.endswith(".csv") or escaped_filename.endswith(".tsv")):
-                raise ValueError("Please upload only csv and tsv files")
+                raise ValueError("Please upload only csv and tsv files", 'extension_error')
 
             #check that the file is actually csv or tsv
-            print(excel.read(1024))
             dialect = csv.Sniffer().sniff(str(excel.read(65536),'utf-8')) #need to read in enough bytes to include a couple of lines
-            print(str(dialect))
             # double-check the sniffed delimiter is allowed
-            allowed_delimiters = [',', '\t']
-
+            allowed_delimiters = [",", "\t"]
+            delimi = dialect.delimiter
+            # if delimi[0] not in allowed_delimiters:
+            truth = dialect.delimiter in allowed_delimiters
+            # if truth is False:
             if dialect.delimiter not in allowed_delimiters:
-                print(str(dialect.deliminiter))
-                raise TypeError("Invalid file: must be comma or tab-delimited text!")
+                raise ValueError("Invalid file: must be comma or tab-delimited text!", 'delimiter_error')
+
+            # excel.seek(0)
+
+            file_size = 0
+            sig = hashlib.md5()
+            excel.seek(0)
+            while True:
+                chunk = excel.read(65536)
+                chunk_size = len(chunk)
+                if chunk_size == 0:
+                    break
+
+                file_size += chunk_size
+                sig.update(chunk)
+
+            file_hash = sig.hexdigest()
+            excel.seek(0)
 
 
-            excel.save(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename))
-            size = os.stat(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename)).st_size
-            f = File(file_user_id=current_user.id, file_size=str(size/1000) + "KB")
-            yes = f.set_file_hash(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename))
-            no = f.set_file_user_hash(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename))
-            f.set_file_path("/app/csvfiles/%s" % (escaped_filename))
-            parameterSelection['name'] = f.file_user_hash
+            # file_contents = excel.read()
+            # file_hash = hashlib.md5(file_contents).hexdigest()
+            # file_size = len(file_contents)
+            # file_contents = None
+
+            # fileQuery = select([File.file_user_hash]).where(File.file_hash == file_hash and File.file_user_id == current_user.id)
+            existingFile = File.query.filter_by(file_hash = file_hash, file_user_id = current_user.id).first()
+            print(current_user.id)
+
+            # set_file_path("/app/csvfiles/%s" % (escaped_filename))
+            # line = str(self.file_user_id) + filepath
+            # existingFile = db.session.execute(fileQuery).first()
+
+            # numberQuery = select([File.id]).where(File.file_user_id == current_user.id)
+            # userNumFiles = db.session.execute(numberQuery)
+            # userNumFiles = db.session.query(File).filter_by(File.file_user_id = current_user.id)
+            userNumFiles = File.query.filter_by(file_user_id = current_user.id).all()
+            # DBsession.query(AssetsItem).filter_by(
+
+            # define in configuration file
+            print(len(userNumFiles))
+            print(existingFile)
+            if existingFile is None and len(userNumFiles) < 5:
+                # size = os.stat(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename)).st_size
+                f = File(file_user_id=current_user.id, file_size=str(file_size/1024) + "KB")
+                # fileHash = f.set_file_hash(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename))
+                f.file_hash = file_hash
+                fileUserHash = f.set_file_user_hash(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename))
+
+                f.set_file_path("/app/csvfiles/%s" % (escaped_filename))
+                parameterSelection['name'] = f.file_user_hash
+                db.session.add(f)
+
+                excel.save(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename))
+
+            elif existingFile is None and len(userNumFiles) == 5:
+                # just have an error instead
+                # raise an error different kind of exception 'filelimiterror'
+                raise ValueError("Only 5 unique file uploads allowed per user! View \"About this project\" page for an explanation.", 'filelimiterror')
+
+            else:
+                parameterSelection['name'] = existingFile.file_user_hash
+
             parameterSelection['muscles'] = includedMuscles
             parameterSelection['mnames'] = matchedName
             # pS = json.dumps(parameterSelection)
-            print("FILE SIZE: " + str(size))
+            # print("FILE SIZE: " + str(size))
 
 
-            db.session.add(f)
+
             db.session.commit()
             parameterSelection['status'] = 1;
-        except ValueError as e:
+        except (UnicodeDecodeError, ValueError) as e:
             parameterSelection['status'] = 2;
-            parameterSelection['message'] = str(e)
-        except (UnicodeDecodeError, TypeError) as e:
-            parameterSelection['status'] = 2;
-            parameterSelection['message'] = "Invalid file: must be comma or tab-delimited text!"
+            if len(e.args) > 1 and e.args[1] in ('extension_error', 'delimiter_error'):
+                parameterSelection['message'] = "Invalid file: must be comma or tab-delimited text!"
+            elif len(e.args) > 1 and e.args[1] == 'filelimiterror':
+                parameterSelection['message'] = "Only 5 unique file uploads allowed per user! View \"About this project\" page for an explanation."
+            else:
+                parameterSelection['message'] = str(e)
         except Exception as e:
             print(str(e))
+            print(traceback.format_exc())
             parameterSelection['message'] = "An unknown error occurred, please contact support"
             parameterSelection['status'] = 3;
             ###### Must fix this laterrrrr
@@ -225,16 +284,24 @@ def parameterSelection(name, muscles, mnames):
         if (not matchedNames_set.issubset(all_muscles_set)):
             return(render_template('busted.html'))
 
-        timeDigest= datetime.datetime.now(tz=None)
-        timeFormat = timeDigest.strftime("%Y-%m-%d %H:%M:%S.%f")
-        j = Job(job_file_id=name, included_muscles=json.dumps(musclesIncluded), matched_names=json.dumps(matchedNames), lowpass_cutoff=low, highpass_cutoff=high, synergy_number=numSyn, status='submitted', processed_file_path=app.config['UPLOAD_FOLDER'], ip_address=address, time_submitted=timeDigest)
-        jh = j.set_job_hash(''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(50)))
-        # musnames = open(os.path.join(app.config['BASE_FOLDER'] + '/app/static/', '%s.txt' %(jh)), 'w+')
+        # timeDigest= datetime.datetime.now(tz=None)
+        # timeFormat = timeDigest.strftime("%Y-%m-%d %H:%M:%S.%f")
+        # j = Job(job_file_id=name, included_muscles=json.dumps(musclesIncluded), matched_names=json.dumps(matchedNames), lowpass_cutoff=low, highpass_cutoff=high, synergy_number=numSyn, status='submitted', processed_file_path=app.config['UPLOAD_FOLDER'], ip_address=address, time_submitted=timeDigest)
+        # jh = j.set_job_hash(''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(50)))
+        # # musnames = open(os.path.join(app.config['BASE_FOLDER'] + '/app/static/', '%s.txt' %(jh)), 'w+')
         # musnames.write('%s' %(muscles))
-        db.session.add(j)
-        db.session.commit()
-
-        return redirect(url_for('status', name=j.job_hash))
+        # db.session.add(j)
+        # db.session.commit()
+        if (len(musclesIncluded) < numSyn):
+            flash('Select a max synergy solution equal to or below the number of muscles selected')
+        else:
+            timeDigest= datetime.datetime.now(tz=None)
+            timeFormat = timeDigest.strftime("%Y-%m-%d %H:%M:%S.%f")
+            j = Job(job_file_id=name, included_muscles=json.dumps(musclesIncluded), matched_names=json.dumps(matchedNames), lowpass_cutoff=low, highpass_cutoff=high, synergy_number=numSyn, status='submitted', processed_file_path=app.config['UPLOAD_FOLDER'], ip_address=address, time_submitted=timeDigest)
+            jh = j.set_job_hash(''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(50)))
+            db.session.add(j)
+            db.session.commit()
+            return redirect(url_for('status', name=j.job_hash))
 
     return render_template('parameterSelection.html')
 

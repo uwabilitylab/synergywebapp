@@ -43,6 +43,9 @@ def send_error_email(error):
     s.sendmail("clairem9@uw.edu", ["clairem9@uw.edu"], msg.as_string())
     s.quit()
 
+# Make this for the outputs in code cleanup
+#def produce_job_outputs():
+
 
 engine = create_engine('sqlite:///app.db')
 log_file = open('./daemon.log', 'a')
@@ -70,9 +73,10 @@ while True:
                 processing = conn.execute(update_query_pro)
 
                 musclesIncluded = json.loads(selected_job[5])
-                musclesIncluded = ast.literal_eval(musclesIncluded)
+                print(musclesIncluded)
+                # musclesIncluded = ast.literal_eval(musclesIncluded)
                 namesIncluded = json.loads(selected_job[6])
-                namesIncluded = ast.literal_eval(namesIncluded)
+                # namesIncluded = ast.literal_eval(namesIncluded)
                 # print(musclesIncluded)
                 # print(musclesIncluded)
 
@@ -84,7 +88,8 @@ while True:
                 #     print(muin)
                 # Processing file
                 xdata, ydata, aRATE, yfilt, yfiltarray, results, columnNames = readFlaskExcel(excel, musclesIncluded, selected_job[1], selected_job[2])
-
+                print('passed processing')
+                print(selected_job[4])
 
                 # Force a garbage collection
                 gc.collect()
@@ -93,8 +98,9 @@ while True:
 
                 # Calculating Synergies
                 # WW, tVAF, HH, vaf = calculate_Synergies([yfiltarray[i] for i in muin], selected_job[3])
-                WW, tVAF, HH, vaf = calculate_Synergies(yfiltarray, selected_job[3])
 
+                WW, tVAF, HH, vaf = calculate_Synergies(yfiltarray, selected_job[3])
+                print('passed synergy calculation')
                 # VV = [yfiltarray[i] for i in list1]
                 # vaf = vaf(VV, WW, HH)
 
@@ -117,6 +123,8 @@ while True:
                 plotWeights(WW, selected_job[4], namesIncluded, pp)
                 plotAct(xdata, HH, selected_job[4], pp)
                 pp.close()
+
+                print('passed file saving')
 
                 with open('app/static/resultcsv/%s.csv' %(selected_job[4]), "w") as f:
                     writer = csv.writer(f)
@@ -151,7 +159,7 @@ while True:
                         writer.writerows(item)
                         i = i + 1
 
-
+                print('csv file making')
                 # xdata = ydata = aRATE = yfilt = yfiltarray = results = columnNames = None
 
                 # with open('pklfiles/%s.pkl' %(selected_job[4]), 'wb') as f:  # Python 3: open(..., 'wb')
@@ -172,6 +180,7 @@ while True:
                 time.sleep(5)
 
     except SQLAlchemyError as e:
+        print(traceback.format_exc())
         log_file.write('boo database error')
         should_exit = True
 
