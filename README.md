@@ -162,7 +162,7 @@ screen -r synergyapp
 Then go to your browser and navigate to your domain name – if all went well you are all set up!
 
 
-##Troubleshooting
+## Troubleshooting
 The app logs all Python and other runtime errors to the `run/uwsgi.log` file.  If the app appears to start up correctly,
 but some or all pages aren't running correctly, check this file for the possible cause.
 
