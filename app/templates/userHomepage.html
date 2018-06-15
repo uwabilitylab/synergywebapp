@@ -25,89 +25,14 @@
   } */
   </style>
   <body>
-  <!-- <table class="table table-striped">
-    <th>Raw File Path</th>
-    <th>File Size</th>
-    <th>Lowpass Cutoff</th>
-    <th>Highpass Cutoff</th>
-    <th>Synergy Number</th>
-    <th>Status</th>
-    <th>Time Submitted</th>
-    <th>View Job Results</th>
-    {% for two, three in q3 %}
-      <tr>
-        <td>{{two.raw_file_path[14:]}}</td>
-        <td>{{two.file_size}}</td>
-          <td>
-           <table class="table table-bordered">
-             {% for t in three %}
-             <tr>
-               <td>{{t.lowpass_cutoff}}</td>
-             </tr>
-             {% endfor %}
-           </table>
-          </td>
-          <td>
-           <table class="table table-bordered">
-             {% for t in three %}
-             <tr>
-               <td>{{t.highpass_cutoff}}</td>
-             </tr>
-             {% endfor %}
-           </table>
-          </td>
-          <td>
-           <table class="table table-bordered">
-             {% for t in three %}
-             <tr>
-               <td>{{t.synergy_number}}</td>
-             </tr>
-             {% endfor %}
-           </table>
-          </td>
-          <td>
-           <table class="table table-bordered">
-             {% for t in three %}
-             <tr>
-               <td>{{t.status}}</td>
-             </tr>
-             {% endfor %}
-           </table>
-          </td>
-          <td>
-           <table class="table table-bordered">
-             {% for t in three %}
-             <tr>
-               <td>{{t.time_submitted}}</td>
-             </tr>
-             {% endfor %}
-           </table>
-          </td>
-          <td>
-            <table class="table table-bordered">
-              {% for t in three %}
-              <tr>
-                <td>
-                  <form action"" method=POST enctype=multipart/form-data>
-                    <input id='job_hash' type="hidden" name="job_hash" value={{t.job_hash}}>
-                  <a class="uw-btn btn-sm" href="#" onclick="$(this).closest('form').submit()">Results<a/>
-                </form>
-                </td>
-              </tr>
-              {% endfor %}
-            </table>
-          </td>
-      </tr>
-    {% endfor %}
-  </table> -->
   <table class="table table-striped">
     <th class="one">File</th>
     <th class="one">File Size</th>
     <th></th>
-    {% for two, three in q3 %}
+    {% for oneFile, multipleJobs in jobs %}
       <tr>
-        <td title={{two.raw_file_path[14:]}}>{{two.raw_file_path[14:]}}</td>
-        <td>{{two.file_size}}</td>
+        <td title={{oneFile.raw_file_path[14:]}}>{{oneFile.raw_file_path[14:]}}</td>
+        <td>{{oneFile.file_size}}</td>
         <td>
           <table class="table table-striped">
             <th>Lowpass Cutoff</th>
@@ -118,29 +43,29 @@
             <th>Job Results</th>
             <th>Printout</th>
             <th>CSV File</th>
-            {% for t in three %}
+            {% for oneJob in multipleJobs %}
             <tr>
-              <td>{{t.lowpass_cutoff}}</td>
-              <td>{{t.highpass_cutoff}}</td>
-              <td>{{t.synergy_number}}</td>
-              <td>{{t.status}}</td>
-              <td>{{t.time_submitted}}</td>
+              <td>{{oneJob.lowpass_cutoff}}</td>
+              <td>{{oneJob.highpass_cutoff}}</td>
+              <td>{{oneJob.synergy_number}}</td>
+              <td>{{oneJob.status}}</td>
+              <td>{{oneJob.time_submitted}}</td>
               <td>
-                {% if "processed" in t.status %}
+                {% if "processed" in oneJob.status %}
                   <form action"" method=POST enctype=multipart/form-data>
-                    <input id='job_hash' type="hidden" name="job_hash" value={{t.job_hash}}>
+                    <input id='job_hash' type="hidden" name="job_hash" value={{oneJob.job_hash}}>
                     <a class="uw-btn btn-sm" href="#" onclick="$(this).closest('form').submit()">View<a/>
                   </form>
                 {% endif %}
               </td>
               <td>
-                {% if "processed" in t.status %}
-                  <a href='/static/plots/matplots_{{ t.job_hash }}.pdf' target="_blank" class="uw-btn btn-sm">Print</a>
+                {% if "processed" in oneJob.status %}
+                  <a href='/static/plots/matplots_{{ oneJob.job_hash }}.pdf' target="_blank" class="uw-btn btn-sm">Print</a>
                 {% endif %}
               </td>
               <td>
-                {% if "processed" in t.status %}
-                  <a href='/static/resultcsv/{{ t.job_hash }}.csv' class="uw-btn btn-sm" download='{{ t.job_hash }}.csv'>CSV</a>
+                {% if "processed" in oneJob.status %}
+                  <a href='/static/resultcsv/{{ oneJob.job_hash }}.csv' class="uw-btn btn-sm" download='{{ oneJob.job_hash }}.csv'>CSV</a>
                 {% endif %}
               </td>
             </tr>

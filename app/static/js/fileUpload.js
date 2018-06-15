@@ -245,7 +245,7 @@ function progressHandler(event) {
 function completeHandler(event) {
   var parameterSelection = JSON.parse(event.target.responseText);
   if (parameterSelection.status == 1) {
-    document.location.href ='/parameterSelection/' + encodeURIComponent(parameterSelection.name) + '/' + encodeURIComponent(JSON.stringify(parameterSelection.muscles)) + '/' + encodeURIComponent(JSON.stringify(parameterSelection.mnames));
+    document.location.href ='/parameterSelection/?fid=' + encodeURIComponent(parameterSelection.fid) + '&muscles=' + encodeURIComponent(JSON.stringify(parameterSelection.muscles)) + '&mnames=' + encodeURIComponent(JSON.stringify(parameterSelection.mnames));
   } else {
     alert(parameterSelection.message)
   }

@@ -32,37 +32,45 @@ def load_user(id):
 
 class File(db.Model):
     __tablename__ = 'files'
-    id = db.Column(db.Integer, primary_key=True)
-    file_user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    raw_file_path = db.Column(db.String(64), index=True)
-    file_user_hash = db.Column(db.String(64), unique = True)
-    file_hash = db.Column(db.String(64))
-    file_size = db.Column(db.String(64))
-    __table_args__ = (
-        db.UniqueConstraint('file_user_id', 'file_hash'),
-    )
+    id = db.Column(db.Integer, primary_key=True) #stays
+    file_user_id = db.Column(db.Integer, db.ForeignKey('users.id')) #stays
+    raw_file_path = db.Column(db.String(64), index=True) #stays
+    file_hash = db.Column(db.String(64)) #stays
+    file_size = db.Column(db.String(64)) #stays
+    time_submitted = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    new_file_path = db.Column(db.String(64), index=True, unique=True)
 
     def __repr__(self):
         return '<FileId {}>'.format(self.raw_file_path)
 
-    def set_file_hash(self, filepath):
-        with open(filepath, 'rb') as f:
-            self.file_hash = hashlib.md5(f.read()).hexdigest()
-        return self.file_hash
+    def set_hash_size(self, excel):
+        size = 0
+        sig = hashlib.md5()
+        while True:
+            chunk = excel.read(65536)
+            chunk_size = len(chunk)
+            if chunk_size == 0:
+                break
+            size += chunk_size
+            sig.update(chunk)
 
-    def set_file_path(self, path):
-        self.raw_file_path = path
+        self.file_hash = sig.hexdigest()
+        self.file_size = str(size/1024) + " KB"
+        excel.seek(0)
+        # return excel
 
-    def set_file_user_hash(self, filepath):
-        line = str(self.file_user_id) + filepath
-        self.file_user_hash = hashlib.md5(line.encode('utf-8')).hexdigest()
-        return self.file_user_hash
+    def set_new_path(self):
+        new = str(self.file_user_id) + self.file_hash + self.raw_file_path
+        # hashlib.md5(new.encode('utf-8')).hexdigest()
+        # new = hashlib.md5((str(self.file_user_id) + self.file_hash + self.raw_file_path).encode('utf-8')).hexdigest()
+        self.new_file_path = "user%d/%s" %(self.file_user_id, hashlib.md5(new.encode('utf-8')).hexdigest()) + ".csv"
 
 class Job(db.Model):
     __tablename__ = 'jobs'
     id = db.Column(db.Integer, primary_key=True)
     job_hash = db.Column(db.String(64))
-    job_file_id = db.Column(db.String(64), db.ForeignKey('files.file_user_hash'))
+    # job_file_id = db.Column(db.String(64), db.ForeignKey('files.file_user_hash'))
+    job_file_id = db.Column(db.String(64), db.ForeignKey('files.new_file_path'))
     included_muscles = db.Column(db.String(64))
     matched_names = db.Column(db.String(128))
     lowpass_cutoff = db.Column(db.Integer)

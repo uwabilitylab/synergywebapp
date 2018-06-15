@@ -93,21 +93,20 @@ def admin_con(status):
 def userHomepage():
 
     user = current_user.username
-    q1 = User.query.filter_by(username = user).first()
-    if q1 is not None:
+    users = User.query.filter_by(username = current_user.username).first()
+    if users is not None:
 
-        q2 = File.query.filter_by(file_user_id = q1.id).all()
+        files = File.query.filter_by(file_user_id = users.id).all()
 
-        if q2 is not None:
+        if files is not None:
 
-            q3 = []
-            i = 0;
-            for qq22 in q2:
+            jobs = []
+            for oneFile in files:
 
-                qq33 = []
-                qq33.append(qq22)
-                qq33.append(Job.query.filter_by(job_file_id = qq22.file_user_hash).all())
-                q3.append(qq33)
+                oneJob = []
+                oneJob.append(oneFile)
+                oneJob.append(Job.query.filter_by(job_file_id = oneFile.new_file_path).all())
+                jobs.append(oneJob)
 
     if request.method == 'POST':
         try:
@@ -116,7 +115,7 @@ def userHomepage():
         except KeyError:
             return redirect(url_for('doimport'))
 
-    return render_template('userHomepage.html', q2=q2, q3=q3, user=user)
+    return render_template('userHomepage.html', jobs=jobs, user=user)
 
 @app.route("/doimport", methods=['GET', 'POST'])
 @login_required
@@ -125,10 +124,7 @@ def doimport():
 
     user = current_user.username
 
-
-
     if request.method == 'POST':
-
 
         muscle_id_re = r"muscle\[(\d+)\]";
         parameterSelection = {'status':0}
@@ -162,83 +158,52 @@ def doimport():
             dialect = csv.Sniffer().sniff(str(excel.read(65536),'utf-8')) #need to read in enough bytes to include a couple of lines
             # double-check the sniffed delimiter is allowed
             allowed_delimiters = [",", "\t"]
-            delimi = dialect.delimiter
-            # if delimi[0] not in allowed_delimiters:
-            truth = dialect.delimiter in allowed_delimiters
+
             # if truth is False:
             if dialect.delimiter not in allowed_delimiters:
                 raise ValueError("Invalid file: must be comma or tab-delimited text!", 'delimiter_error')
 
-            # excel.seek(0)
+            #making new file entry
+            f = File()
+            f.file_user_id = current_user.id
+            f.raw_file_path = escaped_filename
+            f.set_hash_size(excel)
+            # excel = f.set_hash_size(excel)
+            userDirectory = app.config['UPLOAD_FOLDER'] + "/user%d/" %(current_user.id)
+            if os.path.isdir(userDirectory) is False:
+                os.mkdir(userDirectory)
+            f.set_new_path()
+            # f.set_new_path("/user%d/%s" % (current_user.id, fileUserHash))
+            timeDigest = datetime.datetime.now(tz=None)
+            timeFormat = timeDigest.strftime("%Y-%m-%d %H:%M:%S.%f")
+            f.time_submitted = timeDigest
 
-            file_size = 0
-            sig = hashlib.md5()
-            excel.seek(0)
-            while True:
-                chunk = excel.read(65536)
-                chunk_size = len(chunk)
-                if chunk_size == 0:
-                    break
-
-                file_size += chunk_size
-                sig.update(chunk)
-
-            file_hash = sig.hexdigest()
-            excel.seek(0)
-
-
-            # file_contents = excel.read()
-            # file_hash = hashlib.md5(file_contents).hexdigest()
-            # file_size = len(file_contents)
-            # file_contents = None
-
-            # fileQuery = select([File.file_user_hash]).where(File.file_hash == file_hash and File.file_user_id == current_user.id)
-            existingFile = File.query.filter_by(file_hash = file_hash, file_user_id = current_user.id).first()
-            print(current_user.id)
-
-            # set_file_path("/app/csvfiles/%s" % (escaped_filename))
-            # line = str(self.file_user_id) + filepath
-            # existingFile = db.session.execute(fileQuery).first()
-
-            # numberQuery = select([File.id]).where(File.file_user_id == current_user.id)
-            # userNumFiles = db.session.execute(numberQuery)
-            # userNumFiles = db.session.query(File).filter_by(File.file_user_id = current_user.id)
+            #check if file contents, filename, and user combination match an entry in files
+            existingFile = File.query.filter_by(new_file_path = f.new_file_path).first()
+            #check the number of file uploads the current user has
             userNumFiles = File.query.filter_by(file_user_id = current_user.id).all()
-            # DBsession.query(AssetsItem).filter_by(
 
-            # define in configuration file
-            print(len(userNumFiles))
-            print(existingFile)
             if existingFile is None and len(userNumFiles) < 5:
-                # size = os.stat(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename)).st_size
-                f = File(file_user_id=current_user.id, file_size=str(file_size/1024) + "KB")
-                # fileHash = f.set_file_hash(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename))
-                f.file_hash = file_hash
-                fileUserHash = f.set_file_user_hash(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename))
-
-                f.set_file_path("/app/csvfiles/%s" % (escaped_filename))
-                parameterSelection['name'] = f.file_user_hash
+                #f is existing file. Will add to database
+                # parameterSelection['name'] = f.new_file_path[:-4]
+                parameterSelection['fid'] = f.id
                 db.session.add(f)
-
-                excel.save(os.path.join(app.config['UPLOAD_FOLDER'], escaped_filename))
+                excel.save(os.path.join(app.config['UPLOAD_FOLDER'], f.new_file_path))
 
             elif existingFile is None and len(userNumFiles) == 5:
-                # just have an error instead
-                # raise an error different kind of exception 'filelimiterror'
+                #raise error to limit the number of files per user
                 raise ValueError("Only 5 unique file uploads allowed per user! View \"About this project\" page for an explanation.", 'filelimiterror')
 
             else:
-                parameterSelection['name'] = existingFile.file_user_hash
+                #if file exists, set name of file to existing file
+                parameterSelection['fid'] = existingFile.id
 
             parameterSelection['muscles'] = includedMuscles
             parameterSelection['mnames'] = matchedName
-            # pS = json.dumps(parameterSelection)
-            # print("FILE SIZE: " + str(size))
-
-
-
             db.session.commit()
+            #if commit works, set status to 1
             parameterSelection['status'] = 1;
+
         except (UnicodeDecodeError, ValueError) as e:
             parameterSelection['status'] = 2;
             if len(e.args) > 1 and e.args[1] in ('extension_error', 'delimiter_error'):
@@ -248,24 +213,27 @@ def doimport():
             else:
                 parameterSelection['message'] = str(e)
         except Exception as e:
-            print(str(e))
-            print(traceback.format_exc())
             parameterSelection['message'] = "An unknown error occurred, please contact support"
             parameterSelection['status'] = 3;
-            ###### Must fix this laterrrrr
-
 
         # return redirect(url_for('parameterSelection',name=f.file_user_hash,muscles=includedMuscles,mnames=matchedName))
         return jsonify(parameterSelection)
 
-    return render_template('fileUpload.html', array=otherarray, text=othertext,lowarray=lowarray, lowtext=lowtext,trunkarray=trunkarray,trunktext=trunktext,higharray=higharray,hightext=hightext)
+    return render_template('fileUpload.html', array=otherarray, text=othertext, lowarray=lowarray, lowtext=lowtext, trunkarray=trunkarray, trunktext=trunktext, higharray=higharray, hightext=hightext)
 
 
-@app.route("/parameterSelection/<string:name>/<string:muscles>/<string:mnames>", methods=['GET', 'POST'])
+@app.route("/parameterSelection/", methods=['GET', 'POST'])
 @login_required
 @check_confirmed
-def parameterSelection(name, muscles, mnames):
+def parameterSelection():
     user = current_user.username
+    file_id = request.args.get('fid')
+    oneFile = File.query.filter_by(id = file_id).first()
+    name = oneFile.new_file_path
+    muscles = request.args.get('muscles')
+    mnames = request.args.get('mnames')
+
+    print(name + ":" + muscles + ":" + mnames)
 
     if request.method == 'POST':
         low = int(request.form['low'])
@@ -273,10 +241,8 @@ def parameterSelection(name, muscles, mnames):
         numSyn = int(request.form['syn'])
         address = request.remote_addr
 
-        matchedNames = json.loads(urllib.parse.unquote(mnames))
-        musclesIncluded = json.loads(urllib.parse.unquote(muscles))
-        print(matchedNames)
-        print(musclesIncluded)
+        matchedNames = json.loads(mnames)
+        musclesIncluded = json.loads(muscles)
 
         all_muscles_set = set(all_muscles)
         matchedNames_set = set(matchedNames)
@@ -284,14 +250,6 @@ def parameterSelection(name, muscles, mnames):
         if (not matchedNames_set.issubset(all_muscles_set)):
             return(render_template('busted.html'))
 
-        # timeDigest= datetime.datetime.now(tz=None)
-        # timeFormat = timeDigest.strftime("%Y-%m-%d %H:%M:%S.%f")
-        # j = Job(job_file_id=name, included_muscles=json.dumps(musclesIncluded), matched_names=json.dumps(matchedNames), lowpass_cutoff=low, highpass_cutoff=high, synergy_number=numSyn, status='submitted', processed_file_path=app.config['UPLOAD_FOLDER'], ip_address=address, time_submitted=timeDigest)
-        # jh = j.set_job_hash(''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(50)))
-        # # musnames = open(os.path.join(app.config['BASE_FOLDER'] + '/app/static/', '%s.txt' %(jh)), 'w+')
-        # musnames.write('%s' %(muscles))
-        # db.session.add(j)
-        # db.session.commit()
         if (len(musclesIncluded) < numSyn):
             flash('Select a max synergy solution equal to or below the number of muscles selected')
         else:
@@ -318,14 +276,6 @@ def status(name):
 
         return redirect(url_for('results', name=name))
 
-    # if request.method == 'POST' and fileStatus == 'processed':
-    #
-    #     return redirect(url_for('results', name=name))
-    #
-    # elif request.method == 'POST':
-    #
-    #     return render_template('status.html',fileStatus=fileStatus)
-
     return render_template('status.html',fileStatus=fileStatus)
 
 @app.route("/results/<string:name>", methods=['GET'], endpoint='results')
@@ -334,21 +284,11 @@ def status(name):
 def result(name):
 
     user = current_user.username
-    #
-    # with open('pklfiles/%s.pkl' %(name), 'rb') as f:  # Python 3: open(..., 'rb')
-    #     resultsJson, WWJson, labels, tVAFJson, tVAFlabels, MNJson, muscleNamesShort = pickle.load(f)
 
-
-    with open('pklfiles/%s.pkl' %(name), 'rb') as f:  # Python 3: open(..., 'rb')
+    with open('pklfiles/%s.pkl' %(name), 'rb') as f:
         [tVAF, vaf] = pickle.load(f)
 
-    # tVAF = [round(elem, 2) for elem in tVAF]
     tVAF = [floor(elem*100)/100 for elem in tVAF]
-
-    # vaf = [round(elem, 2) for elem in vaf]
-
-    print(tVAF)
-    print(vaf)
 
     fn = open(os.path.join(app.config['PLOT_FOLDER'] + '/EMG_Plots_%s' %(name), 'filenames.txt'),'r')
     an = open(os.path.join(app.config['PLOT_FOLDER'] + '/Act_Plots_%s' %(name), 'filenames.txt'),'r')
@@ -394,9 +334,6 @@ def result(name):
 
     return render_template('basic9.html', name = name, fn = fn, awnwn = awnwn, tnn=tnn, tVAF = tVAF, vaf = vaf)
 
-# @app.route("/uploading", methods=['GET', 'POST'])
-# def douploading():
-#     # ajax request
 
 @app.route('/unconfirmed')
 @login_required
@@ -406,10 +343,7 @@ def unconfirmed():
     flash('Waiting for confirmation by system administrators', 'warning')
     return render_template('unconfirmed.html', new_user = current_user.username)
 
-#ajax logins??
-#most likely return json instead of a template
-#Create a fake user that is loaded up every time for now to be able to simulate
-#using a session. Assign every file and job to the one fake user and nothing else.
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated and current_user.confirmed:

@@ -19,6 +19,7 @@ from app.plotEmg import plotEMG
 from app.plotActivations import plotAct
 from app.plotWeights import plotWeights
 from app.plotTVAF import plotTVAF
+from app import app
 # from app.vaf import vaf
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
@@ -63,58 +64,26 @@ while True:
             if selected_job is not None:
 
                 # Corresponding File selection
-                file_query = select([File.raw_file_path]).where(File.file_user_hash == selected_job[0])
+                file_query = select([File.new_file_path]).where(File.new_file_path == selected_job[0])
                 selected_file = conn.execute(file_query).first()
-                excel = "." + selected_file[0]
+                excel = app.config['UPLOAD_FOLDER'] + "/" + selected_file[0]
 
                 # Update job to processing
-                # update_query_pro = update(Job).where(Job.job_file_id == selected_job[0]).values(status='processing')
                 update_query_pro = update(Job).where(Job.job_hash == selected_job[4]).values(status='processing')
                 processing = conn.execute(update_query_pro)
 
                 musclesIncluded = json.loads(selected_job[5])
-                print(musclesIncluded)
-                # musclesIncluded = ast.literal_eval(musclesIncluded)
                 namesIncluded = json.loads(selected_job[6])
-                # namesIncluded = ast.literal_eval(namesIncluded)
-                # print(musclesIncluded)
-                # print(musclesIncluded)
 
-                # mi = open('app/static/%s.txt' %(selected_job[4]),'r')
-                # muin = []
-                # for line in mi:
-                #     line = ast.literal_eval(line)
-                #     muin = [int(i) for i in line]
-                #     print(muin)
                 # Processing file
                 xdata, ydata, aRATE, yfilt, yfiltarray, results, columnNames = readFlaskExcel(excel, musclesIncluded, selected_job[1], selected_job[2])
-                print('passed processing')
-                print(selected_job[4])
 
                 # Force a garbage collection
                 gc.collect()
 
-                # list1 = [4,6,8,9,10,11,12,13]
-
                 # Calculating Synergies
-                # WW, tVAF, HH, vaf = calculate_Synergies([yfiltarray[i] for i in muin], selected_job[3])
-
                 WW, tVAF, HH, vaf = calculate_Synergies(yfiltarray, selected_job[3])
-                print('passed synergy calculation')
-                # VV = [yfiltarray[i] for i in list1]
-                # vaf = vaf(VV, WW, HH)
-
-                # Getting variables in proper form for templates
-                # muscleNames = [columnNames[i] for i in range(len(yfiltarray))]
                 muscleNames = columnNames
-                # muscleNamesShort = [columnNames[muin[i]][0:10] for i in range(len(muin))]
-                # tVAFlabels = ["1 Synergy","2 Synergies","3 Synergies","4 Synergies","5 Synergies"]
-                # labels = ["5","7","9","10","11","12","13","14"]
-                # resultsJson = json.dumps(results)
-                # WWJson = json.dumps(WW)
-                # tVAFJson = json.dumps(tVAF)
-                # MNJson = json.dumps(muscleNames)
-                # MNSJson = json.dumps(muscleNamesShort)
 
                 # Generating matplotlib figures of EMG
                 pp = PdfPages('app/static/plots/matplots_%s.pdf' %(selected_job[4]))
@@ -123,8 +92,6 @@ while True:
                 plotWeights(WW, selected_job[4], namesIncluded, pp)
                 plotAct(xdata, HH, selected_job[4], pp)
                 pp.close()
-
-                print('passed file saving')
 
                 with open('app/static/resultcsv/%s.csv' %(selected_job[4]), "w") as f:
                     writer = csv.writer(f)
@@ -159,12 +126,6 @@ while True:
                         writer.writerows(item)
                         i = i + 1
 
-                print('csv file making')
-                # xdata = ydata = aRATE = yfilt = yfiltarray = results = columnNames = None
-
-                # with open('pklfiles/%s.pkl' %(selected_job[4]), 'wb') as f:  # Python 3: open(..., 'wb')
-                #     pickle.dump([resultsJson, WWJson, labels, tVAFJson, tVAFlabels, MNJson, muscleNamesShort], f)
-
                 with open('pklfiles/%s.pkl' %(selected_job[4]), 'wb') as f:  # Python 3: open(..., 'wb')
                     pickle.dump([tVAF, vaf], f)
 
@@ -172,7 +133,6 @@ while True:
                 log_file.write('successfully wrote file')
 
                 # Update job to processed
-                # update_query_done = update(Job).where(Job.job_file_id == selected_job[0]).values(status='processed')
                 update_query_done = update(Job).where(Job.job_hash == selected_job[4]).values(status='processed')
                 conn.execute(update_query_done)
 
