@@ -30,7 +30,7 @@ import os
 import ast
 import traceback
 
-plt.style.use('synergywebapp')
+plt.style.use('./deploy/synergywebapp.mplstyle')
 
 
 def send_error_email(error):
@@ -47,8 +47,8 @@ def send_error_email(error):
 #def produce_job_outputs():
 
 
-engine = create_engine('sqlite:///app.db')
-log_file = open('./daemon.log', 'a')
+engine = create_engine('sqlite:///run/app.db')
+log_file = open('./run/daemon.log', 'a')
 
 while True:
 
