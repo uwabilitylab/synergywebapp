@@ -92,7 +92,14 @@ The app runs with uWSGI and Nginx
 
 #### Flask Setup
 The app uses the [Flask](http://flask.pocoo.org/) Python framework for running the app
-TODO: setting up the db etc
+
+##### Database Setup
+Initialize the database with the following commands:
+```
+flask db init
+flask db migrate -m"initial migration"
+flask db upgrade
+```
 
 #### uWSGI
 The app uses [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) to run the Flask framework in production deployments.
@@ -119,7 +126,7 @@ Before running, we need to make a couple of final changes so Nginx can run the a
 Set up file permissions as needed:
 ```
 # Make sure Nginx can write to the app's run/ directory:
-chown nginx:ec2-user /mnt/data/www/synergywebapp/run
+chown -R nginx:ec2-user /mnt/data/www/synergywebapp/run
 chmod 775 /mnt/data/www/synergywebapp/run
 
 # Make sure Nginx can write to the file upload directory
@@ -127,8 +134,9 @@ chown nginx:ec2-user /mnt/data/www/synergywebapp/app/csvfiles
 chmod 775 /mnt/data/www/synergywebapp/app/csvfiles
 ```
 
-Make sure all Nginx automatically starts up on a server reboot:
+Start Nginx, and make sure it automatically starts up on a server reboot:
 ```
+service nginx start
 chkconfig nginx on
 ```
 
