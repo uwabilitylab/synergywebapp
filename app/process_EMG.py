@@ -35,10 +35,11 @@ def step02_processEMG(raw_EMG, aRATE, HP_CO, HP_order, LP_CO, LP_order, filename
     cutoff = int(LP_CO)
     b1, a1 = signal.butter(LP_order, cutoff/(aRATE/2), btype='lowpass')
     pEMG = signal.filtfilt(b1, a1, EMG3, padlen=0)
-
+    
 #   Normalize
-    pEMG = pEMG/pEMG.max()
-    raw_EMG = raw_EMG/raw_EMG.max()
+    if raw_EMG.max() != 0:
+        pEMG = pEMG/pEMG.max()
+        raw_EMG = raw_EMG/raw_EMG.max()
 
 #   Zero out negative values
     pEMG = pEMG.clip(min=0)

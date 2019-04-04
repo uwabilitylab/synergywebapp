@@ -1,43 +1,6 @@
-import os
-import pandas as pd
-
-from flask import Flask, render_template, Markup, request, jsonify, flash, redirect, url_for, session, flash
-from flask_bootstrap import Bootstrap
-from flask_moment import Moment
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_login import LoginManager, login_user, logout_user, current_user, login_required
-from config import Config
-
-from werkzeug import secure_filename
-from flask_login import UserMixin
-from decorators import check_confirmed
-from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.urls import url_parse
-# from json import dumps, loads, JSONEncoder, JSONDecoder
-import json
-# from process_EMG import step02_processEMG
-from scipy import signal
-# from flaskLoadFile import readFlaskExcel
-# from flaskSynergies import calculate_Synergies, calculate_tVAF
-import numpy as np
-import scipy.io as sio
-from sklearn.decomposition import NMF
-import time
-import itertools
-import multiprocessing
-# from xydatamaker import xycoordinates
-# from sim2 import similarity2
-import csv
-from hashlib import sha1
-import datetime
-import random
-import string
-import sqlite3
-
+from flask import render_template
 from app import app, db
-from app.models import User, File, Job
-
+from app.models import Job
 
 @app.shell_context_processor
 def make_shell_context():
@@ -54,4 +17,3 @@ def internal_server_error(e):
 @app.errorhandler(413)
 def internal_server_error(e):
     return render_template('413.html'), 413
-# import routes, models, forms

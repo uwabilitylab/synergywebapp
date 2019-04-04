@@ -5,8 +5,6 @@ import itertools
 import multiprocessing
 import numpy as np
 from math import floor
-#from vaf import vaf
-#from multiprocessing import Pool, freeze_support
 
 def calculate_tVAF(V,W,H,vaf):
 

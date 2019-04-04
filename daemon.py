@@ -20,7 +20,6 @@ from app.plotActivations import plotAct
 from app.plotWeights import plotWeights
 from app.plotTVAF import plotTVAF
 from app import app
-# from app.vaf import vaf
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 import json

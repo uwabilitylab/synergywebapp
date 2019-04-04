@@ -27,8 +27,7 @@
     <h1>Synergy Calculator</h1>
   </div>
     <h4>Upload your unprocessed EMG file here for synergy calculations. Acceptable file formats include csv and tsv.</h4>
-    <p>Please make your file the same format as the attached downloadable file. Each EMG column header must have "EMG" and unique identifiers that identify it from other EMG columns. Additionally, each EMG column must immediately follow a time column.</p>
-    <a href="static/example_excel.csv" download>Example Template</a>
+    <p>File formats must follow the <a href="static/example_excel.csv" download>example template</a>. Each EMG column must be preceded by its time column and have a unique header name that includes "EMG" in the title.</p>
   <body>
 
     <form id="fileform" method=POST enctype="multipart/form-data" autocomplete="off">
@@ -44,8 +43,10 @@
      <label><input type="checkbox" required name="checkbox" value="check" id="agree"/> I certify that this file contains no patient identifiers and can be stored on the Ability Lab's Servers</label>
      <progress id="progressBar" value="0" max="100" style="width:300px;" hidden="true"></progress>
      <p id="status"></p>
-     <a class="uw-btn" href="#" onclick="$(this).closest('form').submit();return false;">Upload</a>
-     <input type="submit" style="display: inline" />
+
+    <!-- <a class="uw-btn" type="submit">Upload</a> -->
+    <a class="uw-btn" type="submit" href="#" onclick="$(this).closest('form').submit();return false;">Upload</a>
+    <input type="submit" style="display: inline" />
     </form>
 
     <script type="text/javascript">

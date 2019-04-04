@@ -31,6 +31,7 @@ def readFlaskExcel(excelfile, included_mus, lowpass, highpass):
             ydata['EMG %s' %(j)] = np.array(loadedfile[column[i]], dtype=np.float64)
             aRATE['aRATE %s' %(j)] = int(round(1/((loadedfile[column[i-1]][len(loadedfile[column[i-1]])-1]-loadedfile[column[i-1]][0])/len(loadedfile[column[i-1]]))))
             rawEMG, pEMG = step02_processEMG(ydata['EMG %s' %(j)], aRATE['aRATE %s' %(j)], int(highpass), 4, int(lowpass)  , 4, 'EMG %s' %(j))
+            print(max(pEMG))
             yfilt['EMGFilt %s' %(j)] = pEMG
             ydata['EMG %s' %(j)] = np.array(rawEMG.tolist(), dtype=np.float64)
             yfiltarray.append(pEMG)
