@@ -13,7 +13,6 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
     confirmed_on = db.Column(db.DateTime, nullable=True)
-    # files = db.relationship('File', backref='users', lazy='dynamic')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -26,8 +25,6 @@ class User(UserMixin, db.Model):
 
 @login.user_loader
 def load_user(id):
-    # return c.execute('SELECT (user_id) FROM users WHERE user_id = {idid}'.\
-                # format(idid=id))
     return User.query.get(int(id))
 
 class File(db.Model):
@@ -57,19 +54,15 @@ class File(db.Model):
         self.file_hash = sig.hexdigest()
         self.file_size = str(size/1024) + " KB"
         excel.seek(0)
-        # return excel
 
     def set_new_path(self):
         new = str(self.file_user_id) + self.file_hash + self.raw_file_path
-        # hashlib.md5(new.encode('utf-8')).hexdigest()
-        # new = hashlib.md5((str(self.file_user_id) + self.file_hash + self.raw_file_path).encode('utf-8')).hexdigest()
         self.new_file_path = "user%d/%s" %(self.file_user_id, hashlib.md5(new.encode('utf-8')).hexdigest()) + ".csv"
 
 class Job(db.Model):
     __tablename__ = 'jobs'
     id = db.Column(db.Integer, primary_key=True)
     job_hash = db.Column(db.String(64))
-    # job_file_id = db.Column(db.String(64), db.ForeignKey('files.file_user_hash'))
     job_file_id = db.Column(db.String(64), db.ForeignKey('files.new_file_path'))
     included_muscles = db.Column(db.String(64))
     matched_names = db.Column(db.String(128))

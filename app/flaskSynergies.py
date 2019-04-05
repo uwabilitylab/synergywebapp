@@ -1,8 +1,4 @@
-import scipy.io as sio
 from sklearn.decomposition import NMF
-import time
-import itertools
-import multiprocessing
 import numpy as np
 from math import floor
 
@@ -20,7 +16,6 @@ def calculate_vaf(VV,WW,HH):
     err_sub = VV - np.dot(np.transpose(WW),HH)
     vaf = 1-sum(sum(np.square(err_sub)))/sum(sum(np.square(VV)))
 
-    # return round(vaf,2)
     return floor(vaf*100)/100
 
 def calculate_Synergies(emg, numSyn):
@@ -33,9 +28,6 @@ def calculate_Synergies(emg, numSyn):
     H_keep = []
     VAF = []
 
-    start = time.time()
-
-    #emg = np.transpose(emg)
     for i in range(numSyn): # second dimension of the matrix
         vafone = []
         nsyn = i+1
@@ -70,10 +62,5 @@ def calculate_Synergies(emg, numSyn):
         WW.append(Wlist)
         HH.append(H_keep)
         VAF.append(vafone)
-
-    end = time.time()
-    # for i in range(4):
-    #     for j in range(WW[i+1].len):
-
 
     return (WW, tVAF, HH, VAF)

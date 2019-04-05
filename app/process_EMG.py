@@ -7,22 +7,13 @@ Created on Sun Oct 22 15:57:31 2017
 
 import numpy as np
 from scipy import signal
-from matplotlib import pyplot as plt
-from scipy.interpolate import interp1d
-from scipy.fftpack import fft
-import scipy
-
 
 # Filtering
 def step02_processEMG(raw_EMG, aRATE, HP_CO, HP_order, LP_CO, LP_order, filename):
 
 #   High-pass filtering
     cutoff = int(HP_CO)
-    # if cutoff == 1000:
-    #     EMG1 = raw_EMG
-    # else :
     b, a = signal.butter(HP_order, cutoff/(aRATE/2),btype='highpass')
-    # raw_EMG = np.reshape(raw_EMG,[len(raw_EMG),1])
     EMG1 = signal.filtfilt(b, a, raw_EMG, padlen=0)
 
 #   Demeaning
@@ -35,7 +26,7 @@ def step02_processEMG(raw_EMG, aRATE, HP_CO, HP_order, LP_CO, LP_order, filename
     cutoff = int(LP_CO)
     b1, a1 = signal.butter(LP_order, cutoff/(aRATE/2), btype='lowpass')
     pEMG = signal.filtfilt(b1, a1, EMG3, padlen=0)
-    
+
 #   Normalize
     if raw_EMG.max() != 0:
         pEMG = pEMG/pEMG.max()

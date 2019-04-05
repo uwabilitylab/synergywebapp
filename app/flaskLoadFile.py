@@ -1,14 +1,11 @@
-import pandas as pd
 from app.process_EMG import step02_processEMG
-import time
-from app.xydatamaker import xycoordinates
+import pandas as pd
 import numpy as np
 
 def readFlaskExcel(excelfile, included_mus, lowpass, highpass):
 
     if excelfile.endswith(".csv"):
         loadedfile = pd.read_csv(excelfile)
-        # try numpy.load text
     elif excelfile.endswith(".tsv"):
         loadedfile = pd.read_csv(excelfile, delimiter='\t')
     else:
