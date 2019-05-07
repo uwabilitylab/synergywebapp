@@ -1,0 +1,18 @@
+[Unit]
+Description=Synergy Webapp uwsgi init
+After=network.target remote-fs.target nss-lookup.target syslog.target
+
+[Service]
+ExecStart=/usr/local/bin/uwsgi --ini /mnt/data/www/synergywebapp/synergyApp.ini
+# Requires systemd version 211 or newer
+User=nginx
+Group=nginx
+Restart=on-failure
+KillSignal=SIGQUIT
+Type=notify
+StandardError=syslog
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
+
