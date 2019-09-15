@@ -7,6 +7,7 @@ from app import app, db
 from werkzeug.datastructures import FileStorage
 from app.forms import LoginForm, RegistrationForm
 from app.models import User, File, Job
+from app.email import send_email, send_confirmation_email
 from sqlalchemy.sql import select, func
 import pandas as pd
 from math import floor
@@ -26,10 +27,10 @@ import traceback
 #define muscles here
 otherarray = ["", "Other"];
 othertext =["Don't Include", "Other"];
-lowarray = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32"];
-lowtext = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32"];
-# lowarray = ["Add_Mag", "Gas_Med", "Glu_Max", "Glu_Med", "Lat_Ham", "Med_Ham", "Pre_Bre", "Rec_Fem", "Soleus", "Ten_Fas_Lat", "Tib_Ant", "Vas_Med", "Vas_Lat"];
-# lowtext = ["Adductor Magnus",  "Gastrocnemius Medialis", "Gluteus Maximus", "Gluteus Medius", "Lateral Hamstring", "Medial Hamstring", "Peroneus Brevis", "Rectus Femoris", "Soleus", "Tensor Fasciae Latae", "Tibialis Anterior", "Vastus Medialis", "Vastus Lateralis"];
+#lowarray = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32"];
+#lowtext = ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32"];
+lowarray = ["Add_Mag", "Gas_Med", "Glu_Max", "Glu_Med", "Lat_Ham", "Med_Ham", "Pre_Bre", "Rec_Fem", "Soleus", "Ten_Fas_Lat", "Tib_Ant", "Vas_Med", "Vas_Lat"];
+lowtext = ["Adductor Magnus",  "Gastrocnemius Medialis", "Gluteus Maximus", "Gluteus Medius", "Lateral Hamstring", "Medial Hamstring", "Peroneus Brevis", "Rectus Femoris", "Soleus", "Tensor Fasciae Latae", "Tibialis Anterior", "Vastus Medialis", "Vastus Lateralis"];
 trunkarray = ["Ere_Spi", "Ext_Obl", "Lat_Dor", "Rec_Abd", "Spleni", "Trap_Inf", "Tra_Sup"];
 trunktext = ["Erector Spinae", "External Obliques", "Latissimus Dorsi", "Rectus Abdmoninus", "Splenius", "Trapizius Inferior", "Trapizius Superior"];
 higharray =["Ant_Del", "Bic_Bra", "Pos_Del", "Tri_Bra"];
@@ -61,6 +62,7 @@ def admin():
     users = User.query.all()
 
     if request.method == 'POST':
+        status = request.form["user_conf"]
         return redirect(url_for('admin_con', status = request.form["user_conf"]))
 
     return render_template('admin.html', users = users)
@@ -82,6 +84,9 @@ def admin_con(status):
         timeFormat = timeDigest.strftime("%Y-%m-%d %H:%M:%S.%f")
         change_status.confirmed_on = timeDigest
         db.session.commit()
+        se = app.config['ADMINS'][0]
+        r = [change_status.email]
+        send_confirmation_email(sender=se, recipients=r)
     else:
         # update(User).where(User.username == status).values(confirmed=False)
         change_status.confirmed = False
@@ -185,9 +190,10 @@ def doimport():
             #check the number of file uploads the current user has
             userNumFiles = File.query.filter_by(file_user_id = current_user.id).all()
 
-            if existingFile is None and len(userNumFiles) < 5:
+            limitFileSize = float(f.file_size[:-3])
+
+            if existingFile is None and len(userNumFiles) < 5 and limitFileSize <= 60000:
                 #f is existing file. Will add to database
-                # parameterSelection['name'] = f.new_file_path[:-4]
                 parameterSelection['fid'] = f.id
                 db.session.add(f)
                 excel.save(os.path.join(app.config['UPLOAD_FOLDER'], f.new_file_path))
@@ -196,8 +202,12 @@ def doimport():
                 #raise error to limit the number of files per user
                 raise ValueError("Only 5 unique file uploads allowed per user! View \"About this project\" page for an explanation.", 'filelimiterror')
 
+            elif limitFileSize > 60000:
+                raise ValueError("Please upload files of size less than 60 MB")
+
             else:
                 #if file exists, set name of file to existing file
+                print(existingFile.id)
                 parameterSelection['fid'] = existingFile.id
 
             parameterSelection['muscles'] = includedMuscles
@@ -395,6 +405,12 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
+        s = 'New Synergy User'
+        se = app.config['ADMINS'][0]
+        r = ['clairemit9@gmail.com']
+        tb = 'Confirm New User Account'
+        send_email(subject=s, sender=se, recipients=r, text_body=tb)
+
         return redirect(url_for('unconfirmed'))
 
     return render_template('register.html', title='Register', form=form)

@@ -43,11 +43,10 @@
      <label><input type="checkbox" required name="checkbox" value="check" id="agree"/> I certify that this file contains no patient identifiers and can be stored on the Ability Lab's Servers</label>
      <progress id="progressBar" value="0" max="100" style="width:300px;" hidden="true"></progress>
      <p id="status"></p>
-
-    <!-- <a class="uw-btn" type="submit">Upload</a> -->
-    <a class="uw-btn" type="submit" href="#" onclick="$(this).closest('form').submit();return false;">Upload</a>
-    <input type="submit" style="display: inline" />
+     <input type="submit" style="display: inline" />
     </form>
+
+
 
     <script type="text/javascript">
     var array = {{array|tojson|safe}};
