@@ -194,8 +194,9 @@ def doimport():
 
             if existingFile is None and len(userNumFiles) < 5 and limitFileSize <= 60000:
                 #f is existing file. Will add to database
-                parameterSelection['fid'] = f.id
                 db.session.add(f)
+                db.session.commit()
+                parameterSelection['fid'] = f.id
                 excel.save(os.path.join(app.config['UPLOAD_FOLDER'], f.new_file_path))
 
             elif existingFile is None and len(userNumFiles) == 5:
@@ -207,12 +208,11 @@ def doimport():
 
             else:
                 #if file exists, set name of file to existing file
-                print(existingFile.id)
                 parameterSelection['fid'] = existingFile.id
 
             parameterSelection['muscles'] = includedMuscles
             parameterSelection['mnames'] = matchedName
-            db.session.commit()
+            # db.session.commit()
             #if commit works, set status to 1
             parameterSelection['status'] = 1;
 
