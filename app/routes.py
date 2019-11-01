@@ -48,8 +48,8 @@ def about():
 
     return render_template('about.html')
 
-@app.route("/aboutClaire", methods=['GET'])
-def aboutClaire():
+@app.route("/aboutProject", methods=['GET'])
+def aboutProject():
 
     return render_template('aboutClaire.html')
 
