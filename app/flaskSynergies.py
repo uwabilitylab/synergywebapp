@@ -2,21 +2,21 @@ from sklearn.decomposition import NMF
 import numpy as np
 from math import floor
 
-def calculate_tVAF(V,W,H,vaf):
+def calculate_tVAF(V,W,H): #calculate total variance accounted for
 
     err_sub = V - np.dot(np.transpose(W),H)
-    vaf = 1-sum(sum(np.square(err_sub)))/sum(sum(np.square(V)))
+    tvaf = 1-sum(sum(np.square(err_sub)))/sum(sum(np.square(V)))
 
-    return vaf
+    return tvaf
 
-def calculate_vaf(VV,WW,HH):
+def calculate_VAF(VV,WW,HH): #calculate variance within each component of a synergy solution
     HH = np.reshape(HH,(1,-1))
     WW = np.reshape(WW,(1,-1))
 
     err_sub = VV - np.dot(np.transpose(WW),HH)
     vaf = 1-sum(sum(np.square(err_sub)))/sum(sum(np.square(VV)))
 
-    return floor(vaf*100)/100
+    return vaf
 
 def calculate_Synergies(emg, numSyn):
 
@@ -47,9 +47,9 @@ def calculate_Synergies(emg, numSyn):
                 W_keep = np.transpose(W)
                 H_keep = H
 
-        tVAF.append(calculate_tVAF(emg, W_keep, H_keep, tVAF))
+        tVAF.append(calculate_tVAF(emg, W_keep, H_keep))
         for k in range(i+1):
-            vafone.append(calculate_vaf(emg, W_keep[k], H_keep[k]))
+            vafone.append(calculate_VAF(emg, W_keep[k], H_keep[k]))
 
         for k in range(len(W_keep)):
             W_keep[k]=W_keep[k]/np.max(W_keep[k])

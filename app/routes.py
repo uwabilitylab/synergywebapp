@@ -301,6 +301,7 @@ def result(name):
         [tVAF, vaf] = pickle.load(f)
 
     tVAF = [floor(elem*100)/100 for elem in tVAF]
+    vaf = [[floor(elem*100)/100 for elem in listElem] for listElem in vaf]
 
     fn = open(os.path.join(app.config['PLOT_FOLDER'] + '/EMG_Plots_%s' %(name), 'filenames.txt'),'r')
     an = open(os.path.join(app.config['PLOT_FOLDER'] + '/Act_Plots_%s' %(name), 'filenames.txt'),'r')

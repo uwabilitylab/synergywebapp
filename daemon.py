@@ -35,13 +35,11 @@ plt.style.use('./deploy/synergywebapp.mplstyle')
 
 def send_error_email(error):
 
-    msg = MIMEText(repr(error))
-    msg['Subject'] = 'The contents of'
-    msg['From'] = "clairem2520@yahoo.com"
-    msg['To'] = "clairem9@uw.edu"
-    s = smtplib.SMTP('localhost', 80)
-    s.sendmail("clairem9@uw.edu", ["clairem9@uw.edu"], msg.as_string())
-    s.quit()
+    s = 'Error Message'
+    se = app.config['ADMINS'][0]
+    r = ['clairemit9@gmail.com']
+    tb = MIMEText(repr(error))
+    send_email(subject=s, sender=se, recipients=r, text_body=tb)
 
 # Make this for the outputs in code cleanup
 #def produce_job_outputs():
