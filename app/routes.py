@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
-from decorators import check_confirmed, admin_required
+from decorators import check_confirmed, admin_required, access_files
 from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 from app import app, db
@@ -278,6 +278,7 @@ def parameterSelection():
 @app.route("/status/<string:name>",methods=['GET', 'POST'])
 @login_required
 @check_confirmed
+@access_files
 def status(name):
 
     user = current_user.username
@@ -293,6 +294,7 @@ def status(name):
 @app.route("/results/<string:name>", methods=['GET'], endpoint='results')
 @login_required
 @check_confirmed
+@access_files
 def result(name):
 
     user = current_user.username
