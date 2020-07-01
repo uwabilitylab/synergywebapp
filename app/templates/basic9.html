@@ -1,5 +1,7 @@
 {% extends "header.html" %}
 
+{% block title %}Results{% endblock %}
+
 {% block styles %}
 {{super()}}
 <link href="{{ url_for('static', filename='emgplots.css') }}" rel="stylesheet"/>

@@ -1,5 +1,7 @@
 {% extends "header.html" %}
 
+{% block title %}Welcome{% endblock %}
+
 {% block styles %}
 {{super()}}
 <link href="{{ url_for('static', filename='newheader.css') }}" rel="stylesheet"/>

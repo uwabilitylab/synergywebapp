@@ -4,22 +4,16 @@
 {{super()}}
 <link href="{{ url_for('static', filename='full.css') }}" rel="stylesheet"/>
 <link href="{{ url_for('static', filename='newheader.css') }}" rel="stylesheet"/>
+<link rel="shortcut icon" href="/static/favicon.ico"/>
 {% endblock %}
 
-{% block title %}Synergies{% endblock %}
-{% block head %}
-{{super()}}
-<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js?ver=1.9.1'></script>
-<script type='text/javascript' src='https://www.washington.edu/wp-includes/js/underscore.min.js?ver=1.6.0'></script>
-<script type='text/javascript' src='https://www.washington.edu/wp-includes/js/backbone.min.js?ver=1.1.2'></script>
-<script type='text/javascript' src='https://www.washington.edu/wp-content/themes/uw-2014/js/site.dev.js'></script>
-<link rel="shortcut icon" href="/static/favicon.ico"/>
+{% block metas %}
 <meta name="keywords" content="python, flask, muscle, synergy, biomechanics, eletromyography, EMG, motor, control">
 {% endblock %}
 
-{% block navbar %}
 
-<body>
+{% block navbar %}
+<nav>
 <div id="uw-container">
   <div id="uw-container-inner">
         <header class="uw-thinstrip">
@@ -93,7 +87,7 @@
         </div>
         <!-- <img src="/static/21390372_10210171564707308_756790771_o.jpg" class="img-fluid" alt="Electromyography"> -->
         <!-- <img src="/static/Neuron-Desktop-Images.jpg" class="img-fluid" alt="Electromyography"> -->
-    </div>
+  </div>
 </div>
 <div>
   <br>
@@ -108,7 +102,5 @@
     {% endwith %}
   <br>
 </div>
-</body>
-</html>
-
+</nav>
 {% endblock %}
