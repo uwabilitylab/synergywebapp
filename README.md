@@ -209,3 +209,19 @@ The app logs all Python and other runtime errors to the `run/uwsgi.log` file.  I
 but some or all pages aren't running correctly, check this file for the possible cause.
 
 You can also check the Nginx error log (`/var/log/nginx/error.log`) in case of startup or other errors.
+
+## Using the Application
+Each user must create an account in order to upload and process files. Every account must be approved by an administrator in order to do so. Before the website is public, first register with the username `Admin`. This account will then manually have to be approved by running in a python console
+```
+from sqlalchemy import create_engine
+from sqlalchemy.sql import update
+
+from app.models import User
+
+engine = create_engine('sqlite:///run/app.db')
+
+command = update(User).where(User.username == 'Admin').values(confirmed=True)
+with engine.connect() as conn:
+    conn.execute(command)
+```
+After confirming the `Admin` user, the website can be made public and all additional users can be confirmed by logging in as `Admin` and navigating to `/admin`
