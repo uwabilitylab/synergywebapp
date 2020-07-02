@@ -174,7 +174,41 @@ cp /mnt/data/www/synergywebapp/deploy/synergyapp.service /usr/lib/systemd/system
 systemctl enable /usr/lib/systemd/system/synergyapp.service
 ```
 
+### Setting Up Admin Privileges
+Each user must create an account in order to upload and process files. Every account must be approved by an administrator in order to do so. Before the website is public, first complete and run the script below to create and approve the `Admin` user.
+```
+from sqlalchemy import create_engine
+from sqlalchemy.sql import update
+import datetime
+
+from app.models import User
+from app import db
+
+admin = User(username='Admin', email='YOUR_EMAIL_HERE', institution='YOUR_INSTITUTION_HERE', confirmed=True, confirmed_on=datetime.datetime.now(tz=None))
+admin.set_password('YOUR_PASSWORD_HERE')
+
+db.session.add(admin)
+db.session.commit()
+```
+After confirming the `Admin` user, the website can be made public and all additional users can be confirmed by logging in as `Admin` and navigating to `/admin`
+
+### Setting Up Email Privileges
+Each time a new user is created an email is sent to the designated address to notify the administrator that a new account needs approval. Once the administrator approves the account an email is sent to the user notifying them that their account has been approved. In order to set this up the following variables must be exported in the console. Most emails will require `Less secure app access` to be turned on in order to login, and so it is suggested that this email not be used for other purposes.
+```
+export MAIL_SERVER=’YOUR_MAIL_SERVER’
+export MAIL_PORT=587
+export MAIL_USE_TLS=1
+export MAIL_USERNAME='YOUR_EMAIL’
+export MAIL_PASSWORD=‘YOUR_EMAIL_PASSWORD’
+```
+
 ### Starting it All Up!
+
+Export these variables
+```
+export BASE_FOLDER=‘YOUR_BASE_FOLDER'
+export SECRET_KEY=‘YOUR_SECRET_KEY’
+```
 
 You can start the application by running the command
 ```
@@ -209,19 +243,3 @@ The app logs all Python and other runtime errors to the `run/uwsgi.log` file.  I
 but some or all pages aren't running correctly, check this file for the possible cause.
 
 You can also check the Nginx error log (`/var/log/nginx/error.log`) in case of startup or other errors.
-
-## Using the Application
-Each user must create an account in order to upload and process files. Every account must be approved by an administrator in order to do so. Before the website is public, first register with the username `Admin`. This account will then manually have to be approved by running in a python console
-```
-from sqlalchemy import create_engine
-from sqlalchemy.sql import update
-
-from app.models import User
-
-engine = create_engine('sqlite:///run/app.db')
-
-command = update(User).where(User.username == 'Admin').values(confirmed=True)
-with engine.connect() as conn:
-    conn.execute(command)
-```
-After confirming the `Admin` user, the website can be made public and all additional users can be confirmed by logging in as `Admin` and navigating to `/admin`
