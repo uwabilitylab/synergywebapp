@@ -5,6 +5,9 @@ Linux distribution.
 
 You can view a demo of this app in action at [https://synergy.me.uw.edu](https://synergy.me.uw.edu).
 
+## About this Project
+This website is designed to increase the accessibility of muscle synergy calculation by deploying python based algorithms online to increase use across the field of motor control. Use this website to explore the world of muscles synergy calculations and how altering filtering parameters or included muscles changes the synergy results.
+
 ## Setting Up: What You'll Need
  * An account with Amazon Web Services or other cloud provider
  * A basic understanding of setting up compute instances on your cloud provider
